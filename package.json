@@ -1,0 +1,26 @@
+{
+  "name": "topological-reads",
+  "version": "1.0.0",
+  "description": "A service for creating and sharing non-linear reading lists",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/topological-reads/topological-reads.git"
+  },
+  "keywords": [
+    "reading-list"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/topological-reads/topological-reads/issues"
+  },
+  "homepage": "https://github.com/topological-reads/topological-reads#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "mongodb": "^3.6.3"
+  }
+}
