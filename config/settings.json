@@ -1,6 +1,6 @@
 {
     "mongoConfig": {
       "serverUrl": "mongodb://localhost:27017/",
-      "database": "Nicole_Crockett_lab6"
+      "database": "topological-reads"
     }
   }
