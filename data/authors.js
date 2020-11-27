@@ -7,20 +7,13 @@ module.exports = {
         if(!author || typeof(author) !== 'string' || author.trim() === ""){
             throw "ERROR: Invalid author input"
         }
-
-        
         author = author.trim();
-        
-
         const authorCollection = await authors();
-    
         let newAuthor = {
           name: author,
         };
-    
         const insertInfo = await authorCollection.insertOne(newAuthor);
         if (insertInfo.insertedCount === 0) throw 'Could not add author';
-    
         const newId = insertInfo.insertedId;
         let author1 = await this.get(newId.toString());
         return author1;

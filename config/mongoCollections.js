@@ -17,4 +17,10 @@ const getCollectionFn = (collection) => {
 module.exports = {
   books: getCollectionFn('books'),
   authors: getCollectionFn('authors'),
+  users: getCollectionFn('users'),
+  forums: getCollectionFn('forums'),
+  groups: getCollectionFn('groups'),
+  lists: getCollectionFn('lists'),
+  threads: getCollectionFn('threads'),
+  tags: getCollectionFn('tags'),
 };

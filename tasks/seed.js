@@ -2,6 +2,7 @@ const dbConnection = require('../config/mongoConnection');
 const data = require('../data/');
 const books = data.books;
 const authors = data.authors;
+const tags = data.tags;
 
 async function main() {
   const db = await dbConnection();
@@ -24,6 +25,13 @@ async function main() {
   const author2 = await authors.create("J.D. Salinger")
   const id4 = author2._id.toString();
   console.log(author2);
+
+  console.log("Making tag 1")
+  const tag1 = await tags.create("Spoopy")
+  console.log(tag1);
+  console.log("Making tag 2")
+  const tag2 = await tags.create("Scary")
+  console.log(tag2);
 /*
   console.log("books: getAll()")
   const book_get = await books.getAll();
