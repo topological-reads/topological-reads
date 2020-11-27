@@ -1,7 +1,7 @@
 const dbConnection = require('../config/mongoConnection');
 const data = require('../data/');
 const books = data.books;
-const reviews = data.reviews;
+const authors = data.authors;
 
 async function main() {
   const db = await dbConnection();
@@ -15,6 +15,15 @@ async function main() {
   const book2 = await books.create("The Great Gatsby",{authorFirstName: "F Scott", authorLastName: "Fitzgerald"},["Novel","Fiction"], "1/1/1920","A green light, and a man holding parties... but why?")
   const id2 = book2._id.toString();
   console.log(book2);
+  
+  console.log("Making author 1")
+  const author1 = await authors.create("F. Scott Fitzgerald")
+  const id3 = author1._id.toString();
+  console.log(author1);
+  console.log("Making author 2")
+  const author2 = await authors.create("J.D. Salinger")
+  const id4 = author2._id.toString();
+  console.log(author2);
 /*
   console.log("books: getAll()")
   const book_get = await books.getAll();
