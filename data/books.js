@@ -1,83 +1,54 @@
 const { ObjectID } = require('mongodb'); // Edit
 const mongoCollections = require('../config/mongoCollections');
 const books = mongoCollections.books;
+const auths = mongoCollections.authors;
 
 module.exports = {
-    async create(title, author, genre, datePublished, summary){
-        if(title === 'undefined' || datePublished === 'undefined'|| summary === 'undefined'){
-          throw "ERROR: You either do not have a title, author, genre, date published, or summary"
+    async create(title, isbn, authors){ // add in ratings and average rating
+        if(!title || typeof(title) !== 'string' || title.trim() === ""){
+            throw "ERROR: Invalid title input"
         }
-        if(typeof(title) !== 'string' || typeof(datePublished) != 'string' || typeof(summary) != 'string'){
-          throw "ERROR: Invalid inputs for title, author, genre, date published, or summary"
+        if(!isbn || typeof(isbn) !== 'string' || isbn.trim() === "" || isbn.length != 13){
+            throw "ERROR: Invalid isbn input"
         }
-        if(title === "" || datePublished === "" || summary === ""){
-          throw "ERROR: Invalid inputs for title, author, genre, date published, or summary"
+        let nums = ['1','2','3','4','5','6','7','8','9','0']
+        for(let i = 0; i < isbn.length; i++){
+            if (!nums.includes(isbn[i])){
+                throw "ERROR: Invalid isbn input"
+            }
         }
-        if(!title.replace(/\s/g, '').length || !datePublished.replace(/\s/g, '').length || !summary.replace(/\s/g, '').length){
-          throw "ERROR: Invalid inputs for title, author, genre, date published, or summary"
-        }
-
-        
-        title = title.trim();
-        datePublished = datePublished.trim();
-        summary = summary.trim();
-        
-        let date = datePublished.split("/");
-        if(date.length !== 3) throw "ERROR: Invalid date";
-        if(Number.isNaN(Number(date[0])) || Number.isNaN(Number(date[1])) || Number.isNaN(Number(date[2]))) throw "ERROR: Invalid date";
-        if(!Number.isInteger(Number(date[0])) || !Number.isInteger(Number(date[1])) || !Number.isInteger(Number(date[2]))) throw "ERROR: Invalid date";
-        if(Number(date[0]) < 1 || Number(date[0]) > 12) throw "ERROR: Invalid date";
-        if(Number(date[1]) < 1 || Number(date[1]) > 31) throw "ERROR: Invalid date";
-        if(Number(date[2]) < 0 || Number(date[2]) > 2020) throw "ERROR: Invalid date";
-        
-        if(!Array.isArray(genre)){
-          throw "ERROR: genre is not an array"
-        }
-        if(genre.length <= 0){
-          throw "ERROR: genre is not a valid array"
-        }
-        let count = 0;
-        let genre_arr = []
-        for(let i = 0; i < genre.length; i++){
-          if(typeof(genre[i]) === 'string' && genre[i] !== "" && genre[i].replace(/\s/g, '').length){
-            count++;
-            genre_arr.push(genre[i].trim())
-          }
-        }
-        if(count === 0){
-          throw "ERROR: Genre does not have any valid strings";
-        }
-        genre = genre_arr
-        if(typeof(author) !== 'object'){
-          throw "ERROR: Invalid input for author";
-        }
-        if(author.authorFirstName === 'undefined' || typeof(author.authorFirstName) !== 'string' || author.authorFirstName.trim() === ""){
-          throw "ERROR: Invalid input for author.authorFirstName";
-        }
-        if(author.authorLastName === 'undefined' || typeof(author.authorLastName) !== 'string' || author.authorLastName.trim() === ""){
-          throw "ERROR: Invalid input for author.authorLastName";
-        }
-        
-        author.authorFirstName = author.authorFirstName.trim(); 
-        author.authorLastName = author.authorLastName.trim();  
-
         const bookCollection = await books();
-    
-        let newBook = {
+        const authorCollection = await auths();
+        if(!authors || !Array.isArray(authors)){
+            throw "ERROR: Invalid author input"
+        }
+        const authorList = await authorCollection.find({}).toArray();
+        //for(let i = 0; i < authors.length; i++){
+        //    let inList = false;
+        //    if (!ObjectID.isValid(authors[i])){
+        //        throw "ERROR: Not all authors are valid IDs"
+        //    }
+        //    for (let j = 0; j < authorList.length; i++){
+        //        if(authorList[j]._id === authors[i]){
+        //            inList = true;
+        //        }
+        //    }
+        //    if(!inList){
+        //        throw "ERROR: Not all authors are valid IDs"
+        //    }
+        //}
+        title = title.trim();
+        isbn = isbn.trim();
+        let newbook = {
           title: title,
-          author: author,
-          genre: genre,
-          datePublished: datePublished,
-          summary: summary,
-          reviews: [],
+          isbn: isbn,
+          authors: authors
         };
-    
-        const insertInfo = await bookCollection.insertOne(newBook);
+        const insertInfo = await bookCollection.insertOne(newbook);
         if (insertInfo.insertedCount === 0) throw 'Could not add book';
-    
         const newId = insertInfo.insertedId;
-        let book = await this.get(newId.toString());
-        return book;
+        let book1 = await this.get(newId.toString());
+        return book1;
       },
 
       async getAll() {
@@ -109,14 +80,9 @@ module.exports = {
         if (id === "") throw "ERROR: Invalid object id"
         if(!ObjectID.isValid(id)) throw 'ERROR: Invalid object id';
         const bookCollection = await books();
-        let review1 = await this.get(id);
-        //let x = review1.reviews;
-        //for(let i = 0; i < x.length; i++){
-        //  await reviews.remove(id, x[i]);
-        //}
         const deletionInfo = await bookCollection.removeOne({ _id: ObjectID(id) });
         //if (deletionInfo.deletedCount === 0) {
-        //  throw `Could not delete user with id of ${id}`;
+        //  throw `Could not delete book with id of ${id}`;
         //}
         return {bookId: id, deleted: true};
       },
@@ -127,75 +93,17 @@ module.exports = {
         if (typeof(id) !== 'string' || id === "") throw 'ERROR: Invalid ID input';
         if(!ObjectID.isValid(id)) throw 'ERROR: Invalid object id';
         if(typeof(book) != 'object') throw 'ERROR: Invalid book';
-        if(book.title === 'undefined' && book.datePublished && 'undefined' && book.summary && 'undefined' && book.genre && 'undefined'  && book.author && 'undefined'){
-          throw "ERROR: Book does not have any updatable components"
+        if(book.name === 'undefined'){
+            throw "ERROR: Book does not have any updatable components";
         }
         let updatedBook = {};
-        if(book.title){
-          if(typeof(book.title) !== 'string' || book.title.trim() === ""){
+        if(book.name){
+          if(typeof(book.name) !== 'string' || book.name.trim() === ""){
             throw "ERROR: Invalid input for title"
           }
-          book.title = book.title.trim();
-          updatedBook.title = book.title;
+          book.name = book.name.trim();
+          updatedBook.name = book.name;
         }
-        
-        if(book.datePublished){
-          if(typeof(book.datePublished) !== 'string' || book.datePublished.trim() === ""){
-            throw "ERROR: Invalid input for datePublished"
-          }
-          book.datePublished = book.datePublished.trim();
-          let date = book.datePublished.split("/");
-          if(date.length !== 3) throw "ERROR: Invalid date";
-          if(Number.isNaN(Number(date[0])) || Number.isNaN(Number(date[1])) || Number.isNaN(Number(date[2]))) throw "ERROR: Invalid date";
-          if(!Number.isInteger(Number(date[0])) || !Number.isInteger(Number(date[1])) || !Number.isInteger(Number(date[2]))) throw "ERROR: Invalid date";
-          if(Number(date[0]) < 1 || Number(date[0]) > 12) throw "ERROR: Invalid date";
-          if(Number(date[1]) < 1 || Number(date[1]) > 31) throw "ERROR: Invalid date";
-          if(Number(date[2]) < 0 || Number(date[2]) > 2020) throw "ERROR: Invalid date"; 
-          updatedBook.datePublished = book.datePublished;      
-        }
-        if(book.summary){
-          if(typeof(book.summary) !== 'string' || book.summary.trim() === ""){
-            throw "ERROR: Invalid input for summary"
-          }
-          book.summary = book.summary.trim();
-          updatedBook.summary = book.summary;
-        }
-        if(book.genre){
-          if(!Array.isArray(book.genre)){
-            throw "ERROR: Genre is not an array"
-          }
-          if(book.genre.length <= 0){
-            throw "ERROR: Genre is not a valid array"
-          }
-          let count = 0;
-          let genre_arr = []
-          for(let i = 0; i < book.genre.length; i++){
-            if(typeof(book.genre[i]) === 'string' && book.genre[i].trim() !== ""){
-              count++;
-              genre_arr.push(book.genre[i].trim())
-            }
-          }
-          if(count === 0){
-            throw "ERROR: Genre does not have any valid strings";
-          }
-          updatedBook.genre = genre_arr
-        }
-        if(book.author){
-          if(typeof(book.author) !== 'object'){
-            throw "ERROR: Invalid input for author";
-          }
-          if(book.author.authorFirstName === 'undefined' || typeof(book.author.authorFirstName) !== 'string' || book.author.authorFirstName.trim() === ""){
-            throw "ERROR: Invalid input for author.authorFirstName";
-          }
-          if(book.author.authorLastName === 'undefined' || typeof(book.author.authorLastName) !== 'string' || book.author.authorLastName.trim() === ""){
-            throw "ERROR: Invalid input for author.authorLastName";
-          }
-          book.author.authorFirstName = book.author.authorFirstName.trim(); 
-          book.author.authorLastName = book.author.authorLastName.trim(); 
-          updatedBook.author = book.author
-        }
-        let book1 = await this.get(id);
-        //updatedBook.reviews = book1.reviews;
   
         const bookCollection = await books();
         const updatedInfo = await bookCollection.updateOne(

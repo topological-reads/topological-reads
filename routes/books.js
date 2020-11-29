@@ -23,29 +23,22 @@ router.post('/', async (req, res) => {
     res.status(400).json({ error: 'You must provide a title' });
     return;
   }
-  if (!book.author) {
-    res.status(400).json({ error: 'You must provide an author' });
+  if (!book.isbn) {
+    res.status(400).json({ error: 'You must provide an isbn' });
     return;
   }
-  if (!book.genre) {
-    res.status(400).json({ error: 'You must provide a genre'});
+  if (!book.authors) {
+    res.status(400).json({ error: 'You must provide author(s)'});
     return;
   }
-  if (!book.datePublished) {
-    res.status(400).json({ error: 'You must provide a date published' });
-    return;
-  }
-  if (!book.summary) {
-    res.status(400).json({ error: 'You must provide a summary' });
-    return;
-  }
-  if(Object.keys(book).length !== 5){
+  
+  if(Object.keys(book).length !== 3){
     res.status(400).json({ error: 'Too many inputs' });
     return;
   }
   try {
-    const newBook = await booksData.create(book.title, book.author, book.genre, book.datePublished, book.summary );
-    res.json(newBook);
+    const newbook = await booksData.create(book.title,book.ibsn,book.authors);
+    res.json(newbook);
   } catch (e) {
       res.status(400).json({ error: e });
   }
@@ -61,7 +54,7 @@ router.get('/:id', async (req, res) => {
     res.json(book);
   } catch (e) {
     console.log(e)
-    res.status(404).json({ error: 'Book not found' });
+    res.status(404).json({ error: 'book not found' });
   }
 });
 
@@ -78,7 +71,7 @@ router.put('/:id', async (req, res) => {
   try {
     await booksData.get(req.params.id);
   } catch (e) {
-    res.status(404).json({ error: 'Book not found' });
+    res.status(404).json({ error: 'book not found' });
     return;
   }
 
