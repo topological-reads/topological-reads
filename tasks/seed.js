@@ -20,20 +20,24 @@ async function main() {
   console.log(author2);
 
   console.log("Making book 1")
-  const book1 = await books.create("The Shining","1111111111111",[id3])
-  //const id = book1._id.toString();
+  const book1 = await books.create("The Shining", 1111111111111,[id3], 
+    1.5, [], "A book")
+  const id = book1._id;
   console.log(book1);
-  console.log("Making book 2")
-  const book2 = await books.create("The Great Gatsby","1111111111112",[id4])
-  const id = book2._id;
-  console.log(book2);
 
   console.log("Making user 1")
-  const user1 = await users.create("Nicole","nicole.crockett79@gmail.com",[id])
-  //const id = book1._id.toString();
+  const user1 = await users.create("Nicole","nicole.crockett79@gmail.com",[id], 
+    [], [], [], [], "password", [])
+  const user1_id = user1._id
   console.log(user1);
   const user_getAll = await users.getAll();
   console.log(user_getAll);
+
+
+  console.log("Making book 2")
+  const book2 = await books.create("The Great Gatsby",1111111111112,[id4], 
+    4.76, [[user1_id, 5]], "A great book")
+  console.log(book2);
 
   console.log("Making tag 1")
   const tag1 = await tags.create("Spoopy")
@@ -50,18 +54,10 @@ async function main() {
   const book_getOne = await books.get(id);
   console.log(book_getOne);
   
-  // CHECK UPDATE LATER
-  //const book_update = await books.update(id, {
-  //  "title": "The Great Gatsby UPDATED"})
-  //console.log(book_update);
-  
-  console.log("books: remove(id)")
-  const book_remove = await books.remove(id);
-  console.log(book_remove);
 
   console.log("books: update");
   console.log('Done seeding database');
-  await db.serverConfig.close();
+  //await db.serverConfig.close();
 }
 
 main();
