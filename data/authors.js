@@ -15,7 +15,7 @@ module.exports = {
         const insertInfo = await authorCollection.insertOne(newAuthor);
         if (insertInfo.insertedCount === 0) throw 'Could not add author';
         const newId = insertInfo.insertedId;
-        let author1 = await this.get(newId.toString());
+        let author1 = await this.get(newId);
         return author1;
       },
 
@@ -27,11 +27,10 @@ module.exports = {
 
       async get(id) {
         if (!id) throw 'ERROR: You must provide an id to search for';
-        if (typeof(id) !== 'string') throw 'ERROR: id is not a string';
-        if (id === '') throw 'ERROR: id is not a valid string';
+        if (typeof(id) !== 'object') throw 'ERROR: id is not an object';
         if(!ObjectID.isValid(id)) throw 'ERROR: Invalid object id'
         const authorCollection = await authors();
-        const author1 = await authorCollection.findOne({ _id: ObjectID(id) });
+        const author1 = await authorCollection.findOne({ _id: id});
         if (author1 === null) throw 'ERROR: No book with that id';
         return author1;
       }

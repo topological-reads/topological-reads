@@ -8,11 +8,11 @@ module.exports = {
         if(!title || typeof(title) !== 'string' || title.trim() === ""){
           throw "ERROR: Invalid title input";
         }
-        if(!isbn || typeof(isbn) !== 'number' || isbn.toString().length != 13 || !Number.isInteger(isbn)){
+        if(!isbn || typeof(isbn) !== 'string' || isbn.trim() === ""){
           throw "ERROR: Invalid isbn input";
         }
 
-        if(!author ||typeof(title) !== 'string' || title.trim() === ""){
+        if(!author || typeof(author) !== 'string' || author.trim() === ""){
           throw "ERROR: Invalid author input";
         }
 
@@ -31,7 +31,7 @@ module.exports = {
               || !ObjectID.isValid(elem[0]) || typeof(elem[1]) !== "number") {
                 throw `ERROR: Invalid rating element ${elem}`;
             }
-            const user1 = await userCollection.findOne({ _id: ObjectID(id) });
+            const user1 = await userCollection.findOne({ _id: elem[0]});
             if (user1 === null) {
               throw `ERROR: rating element ${elem} has a user ID that is not in the db`;
             }
@@ -45,7 +45,7 @@ module.exports = {
 
         let newbook = {
           title: title.trim(),
-          isbn: isbn,
+          isbn: isbn.trim(),
           author: author.trim(),
           averageRating: averageRating,
           ratings: ratings,
@@ -54,7 +54,7 @@ module.exports = {
         const insertInfo = await bookCollection.insertOne(newbook);
         if (insertInfo.insertedCount === 0) throw 'Could not add book';
         const newId = insertInfo.insertedId;
-        let book1 = await this.get(newId.toString());
+        let book1 = await this.get(newId);
         return book1;
       },
 
@@ -66,11 +66,10 @@ module.exports = {
 
       async get(id) {
         if (!id) throw 'ERROR: You must provide an id to search for';
-        if (typeof(id) !== 'string') throw 'ERROR: id is not a string';
-        if (id === '') throw 'ERROR: id is not a valid string';
+        if (typeof(id) !== 'object') throw 'ERROR: id is not an object';
         if(!ObjectID.isValid(id)) throw 'ERROR: Invalid object id'
         const bookCollection = await books();
-        const book1 = await bookCollection.findOne({ _id: ObjectID(id) });
+        const book1 = await bookCollection.findOne({ _id: id});
         if (book1 === null) throw 'ERROR: No book with that id';
         return book1;
       }

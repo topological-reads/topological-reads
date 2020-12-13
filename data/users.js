@@ -2,7 +2,7 @@ const { ObjectID } = require('mongodb'); // Edit
 const mongoCollections = require('../config/mongoCollections');
 const users = mongoCollections.users;
 const books = mongoCollections.books;
-const groups = mongoCollections.groups;
+//const groups = mongoCollections.groups;
 const lists = mongoCollections.lists;
 
 module.exports = {
@@ -21,8 +21,8 @@ module.exports = {
 
         const userCollection = await users();
         const bookCollection = await books();
-        const groupCollection = await groups();
-        const listsCollection = await lists();
+       //const groupCollection = await groups();
+        // const listsCollection = await lists();
 
         for(elem of read) {
           if(!ObjectID.isValid(elem)) {
@@ -42,10 +42,10 @@ module.exports = {
           if(!ObjectID.isValid(elem)) {
             throw `ERROR: ObjectID ${elem.toString()} in groups list is invalid`;
           }
-          const group1 = await groupCollection.findOne({ _id: elem });
-          if (group1 === null) {
-            throw `ERROR: groups element ${elem} has a group ID that is not in the db`;
-          }
+          // const group1 = await groupCollection.findOne({ _id: elem });
+          // if (group1 === null) {
+          //   throw `ERROR: groups element ${elem} has a group ID that is not in the db`;
+          // }
         }
 
         if(!lists || !Array.isArray(lists)){
@@ -56,10 +56,10 @@ module.exports = {
           if(!ObjectID.isValid(elem)) {
             throw `ERROR: ObjectID ${elem.toString()} in reading list is invalid`;
           }
-          const lists1 = await listsCollection.findOne({ _id: elem });
-          if (lists1 === null) {
-            throw `ERROR: lists element ${elem} has an ID that is not in the db`;
-          }
+          // const lists1 = await listsCollection.findOne({ _id: elem });
+          // if (lists1 === null) {
+          //   throw `ERROR: lists element ${elem} has an ID that is not in the db`;
+          // }
         }
 
         if(!listsFollowing || !Array.isArray(listsFollowing)){
@@ -70,10 +70,10 @@ module.exports = {
           if(!ObjectID.isValid(elem)) {
             throw `ERROR: ObjectID ${elem.toString()} in listsFollowing is invalid`;
           }
-          const lists1 = await listsCollection.findOne({ _id: elem });
-          if (lists1 === null) {
-            throw `ERROR: listsFollowing element ${elem} has an ID that is not in the db`;
-          }
+          // const lists1 = await listsCollection.findOne({ _id: elem });
+          // if (lists1 === null) {
+          //   throw `ERROR: listsFollowing element ${elem} has an ID that is not in the db`;
+          // }
         }
 
         if(!usersFollowing || !Array.isArray(usersFollowing)){
@@ -102,10 +102,10 @@ module.exports = {
           if(!ObjectID.isValid(elem)) {
             throw `ERROR: ObjectID ${elem.toString()} in invitations list is invalid`;
           }
-          const group1 = await groupCollection.findOne({ _id: elem });
-          if (group1 === null) {
-            throw `ERROR: invitations element ${elem} has an ID that is not in the db`;
-          }
+          // const group1 = await groupCollection.findOne({ _id: elem });
+          // if (group1 === null) {
+          //   throw `ERROR: invitations element ${elem} has an ID that is not in the db`;
+          // }
         }
 
         let newuser = {
@@ -122,34 +122,32 @@ module.exports = {
         const insertInfo = await userCollection.insertOne(newuser);
         if (insertInfo.insertedCount === 0) throw 'Could not add user';
         const newId = insertInfo.insertedId;
-        let user2 = await this.get(newId.toString());
+        let user2 = await this.get(newId);
         return user2;
       },
 
       async getAll() {
         const userCollection = await users();
         const userList = await userCollection.find({}).toArray();
-        return user
+        return userList
       },
 
       async get(id) {
         if (!id) throw 'ERROR: You must provide an id to search for';
-        if (typeof(id) !== 'string') throw 'ERROR: id is not a string';
-        if (id === '') throw 'ERROR: id is not a valid string';
+        if (typeof(id) !== 'object') throw 'ERROR: id is not an object';
         if(!ObjectID.isValid(id)) throw 'ERROR: Invalid object id'
         const userCollection = await users();
-        const user1 = await userCollection.findOne({ _id: ObjectID(id) });
+        const user1 = await userCollection.findOne({ _id: id});
         if (user1 === null) throw 'ERROR: No user with that id';
         return user1;
       },
 
       async remove(id) {
         if (!id) throw 'ERROR: You must provide an id to search for';
-        if (typeof(id) !== 'string') throw 'ERROR: id is not a string';
-        if (id === "") throw "ERROR: Invalid object id"
+        if (typeof(id) !== 'object') throw 'ERROR: id is not a string';
         if(!ObjectID.isValid(id)) throw 'ERROR: Invalid object id';
         const userCollection = await users();
-        const deletionInfo = await userCollection.removeOne({ _id: ObjectID(id) });
+        const deletionInfo = await userCollection.removeOne({ _id: id});
         if (deletionInfo.deletedCount === 0) {
          throw `Could not delete user with id of ${id}`;
         }
@@ -159,7 +157,7 @@ module.exports = {
       async update(id, user) {
         if (!id) throw 'ERROR: You must provide an id to search for';
         if (!user) throw 'ERROR: You must provide an user to update';
-        if (typeof(id) !== 'string' || id === "") throw 'ERROR: Invalid ID input';
+        if (typeof(id) !== 'object' ) throw 'ERROR: Invalid ID input';
         if(!ObjectID.isValid(id)) throw 'ERROR: Invalid object id';
         if(typeof(user) != 'object') throw 'ERROR: Invalid user';
         if(user.name === 'undefined'){
@@ -176,7 +174,7 @@ module.exports = {
   
         const userCollection = await users();
         const updatedInfo = await userCollection.updateOne(
-          {_id: ObjectID(id)},
+          {_id: id},
           { $set: updatedUser }
         );
         if (!updatedInfo.matchedCount && !updatedInfo.modifiedCount){
