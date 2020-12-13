@@ -5,6 +5,10 @@ const books = data.books;
 const authors = data.authors;
 const tags = data.tags;
 const users = data.users;
+const groups = data.groups;
+const threads = data.threads;
+const forums = data.forums;
+const { ObjectID } = require(`mongodb`)
 
 async function main() {
   const db = await dbConnection();
@@ -62,6 +66,37 @@ async function main() {
       (obj.author ? obj.author : "N/A"), Number(obj.averageRating), [], obj.description)
     
   }
+
+  console.log(`Create a group!:`)
+  const group_create = await groups.create(`Horror Movie Fanatics`, user1_id, false, [`Spoopy`]);
+  const test_create = await groups.create(`Test Run`, user1_id, false, [`Scary, Spooky`]);
+  console.log(`Horror Movie Fanatics:`, group_create);
+  console.log(`Test Group:`, test_create);
+
+  console.log(`Read Test Group:`);
+  const read_test = await groups.read(test_create._id);
+  console.log(`Test Group Read:`, read_test)
+
+  console.log('Adjust group to add invitee:')
+  let updatedGroup = read_test;
+  updatedGroup.invitees = [new ObjectID()];
+  const update_test = await groups.update(read_test._id, updatedGroup);
+  console.log(`Updated Test:`, update_test);
+
+  console.log(`Adjust the new forum:`);
+  console.log(`read read_test._id: ${read_test._id}`);
+  const test_forum = await forums.read(read_test.forum);
+  console.log(`Test!: `, test_forum);
+  const update_forum = await forums.update(test_forum._id, {group: test_forum.group, threads: []});
+  console.log(`Updated Forum: `, update_forum)
+
+  const inserted_thread = await threads.create(update_forum._id, user1_id, `The Shining was so scary to me!`);
+  console.log(`Create a thread for test forum:`, inserted_thread);
+  
+  const deleted_thread = await threads.delete(inserted_thread._id);
+  console.log(`Deleting Test Thread:`, deleted_thread);
+  const deleted_group = await groups.delete(update_forum.group);
+  console.log(`Test Forum deleted: `, deleted_group);
 
   console.log('Done seeding database');
   //await db.serverConfig.close();
