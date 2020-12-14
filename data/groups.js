@@ -6,7 +6,7 @@ const forumsModule = require('./forums');
 module.exports = {
     async create(name, creator, private = false, groupTags = []) {
         if (!name.trim() || typeof name !== `string`) { throw `Error: there was an improper name: ${name} parameter when creating a group.` };
-        let groups_list = await groups.getAll();
+        let groups_list = await this.getAll();
         for(group of groups_list){
             if(name === group.name){
                 throw "ERROR: Name is already taken!"
@@ -48,6 +48,12 @@ module.exports = {
             throw `Error: the group: ${id} could not be found.`;
         }
     },
+    async getAll() {
+        const groupCollection = await groups();
+        const groupList = await groupCollection.find({}).toArray();
+        return groupList;
+    },
+
     async update(id, updatedBody) {
         if (!id || !ObjectID(id)) { throw `Error: the thread parameter id for update() was not correct.` };
         const allGroups = await groups();

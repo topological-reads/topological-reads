@@ -81,5 +81,90 @@ module.exports = {
         const book1 = await bookCollection.findOne({ _id: id});
         if (book1 === null) throw 'ERROR: No book with that id';
         return book1;
-      }
+      },
+
+      async remove(id) {
+        if (!id) throw 'ERROR: You must provide an id to search for';
+        if (typeof(id) !== 'object') throw 'ERROR: id is not a string';
+        if(!ObjectID.isValid(id)) throw 'ERROR: Invalid object id';
+        const bookCollection = await books();
+        const deletionInfo = await bookCollection.removeOne({ _id: id});
+        if (deletionInfo.deletedCount === 0) {
+         throw `Could not delete book with id of ${id}`;
+        }
+        return {bookId: id, deleted: true};
+      },
+
+      async update(id, book) {
+        if (!id) throw 'ERROR: You must provide an id to search for';
+        if (!book) throw 'ERROR: You must provide an book to update';
+        if (typeof(id) !== 'object' ) throw 'ERROR: Invalid ID input';
+        if(!ObjectID.isValid(id)) throw 'ERROR: Invalid object id';
+        if(typeof(book) != 'object') throw 'ERROR: Invalid user';
+        if(book.title === 'undefined'){
+            throw "ERROR: book does not have any updatable components";
+        }
+        let updatedBook = {};
+        if(book.title){
+          if(typeof(book.title) !== 'string' || book.title.trim() === ""){
+            throw "ERROR: Invalid input for title"
+          }
+          book.title = book.title.trim();
+          updatedBook.title = book.title;
+        }
+        if(book.isbn){
+          if(typeof(book.isbn) !== 'string' || book.isbn.trim() === ""){
+            throw "ERROR: Invalid input for isbn"
+          }
+          book.isbn = book.isbn.trim();
+          updatedBook.isbn = book.isbn;
+        }
+        if(book.author){
+          if(typeof(book.author) !== 'string' || book.author.trim() === ""){
+            throw "ERROR: Invalid input for author"
+          }
+          book.author = book.author.trim();
+          updatedBook.author = book.author;
+        }
+        if(book.averageRating){
+          if(typeof(book.averageRating) !== 'number'){
+            throw "ERROR: Invalid input for averageRating"
+          }
+          updatedBook.averageRating = book.averageRating;
+        }
+        if(book.ratings){
+          if(!Array.isArray(ratings)){
+            throw "ERROR: Invalid input for ratings"
+          }
+          for(elem of book.ratings) {
+            const userCollection1 = await users();
+            if(!Array.isArray(elem) || elem.length != 2 
+              || !ObjectID.isValid(elem[0]) || typeof(elem[1]) !== "number") {
+                throw `ERROR: Invalid rating element ${elem}`;
+            }
+            const user1 = await userCollection1.findOne({ _id: elem[0]});
+            if (user1 === null) {
+              throw `ERROR: rating element ${elem} has a user ID that is not in the db`;
+            }
+        }
+        updatedBook.ratings = book.ratings;
+        }
+        if(book.description){
+          if(typeof(book.description) !== 'string' || book.description.trim() === ""){
+            throw "ERROR: Invalid input for author"
+          }
+          book.description = book.description.trim();
+          updatedBook.description = book.description;
+        }
+  
+        const bookCollection = await books();
+        const updatedInfo = await bookCollection.updateOne(
+          {_id: id},
+          { $set: updatedBook }
+        );
+        if (!updatedInfo.matchedCount && !updatedInfo.modifiedCount){
+          throw 'Update failed';
+        }
+        return await this.get(id);
+      },
 };
