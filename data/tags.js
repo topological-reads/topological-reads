@@ -4,6 +4,12 @@ const tags = mongoCollections.tags;
 
 module.exports = {
     async create(tag){
+        let tags_list = await this.getAll();
+        for(const t of tags_list){
+          if(t.tag === tag){
+            throw 'ERROR: Tag already exists'
+          }
+        }
         if(!tag || typeof(tag) !== 'string' || tag.trim() === ""){
             throw "ERROR: Invalid tag input"
         }
@@ -26,6 +32,9 @@ module.exports = {
         for (let i = 0; i < tagList.length; i++){
           tagList[i]._id = tagList[i]._id.toString();
           ans.push({"_id": tagList[i]._id, "name": tagList[i].name})
+        }
+        if(ans === []){
+          throw "ERROR: No tags added yet!"
         }
         return ans;
       },

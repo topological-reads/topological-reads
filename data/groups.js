@@ -6,6 +6,12 @@ const forumsModule = require('./forums');
 module.exports = {
     async create(name, creator, private = false, groupTags = []) {
         if (!name.trim() || typeof name !== `string`) { throw `Error: there was an improper name: ${name} parameter when creating a group.` };
+        let groups_list = await groups.getAll();
+        for(group of groups_list){
+            if(name === group.name){
+                throw "ERROR: Name is already taken!"
+            }
+        }
         if (!creator || !ObjectID(creator)) { throw `Error: there was an improper creator: ${creator} parameter when creating a group.` };
         if (typeof private !== `boolean`) { throw `Error: the private parameter must be a boolean.` };
         if (!Array.isArray(groupTags)) { throw `Error: the groupTags paramter must be an array.` };

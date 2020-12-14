@@ -15,7 +15,12 @@ module.exports = {
           throw "ERROR: Invalid items input";
         }
         const bookCollection = await books();
-    
+        let lists_list = await this.getAll();
+        for(l of lists_list){
+            if(l.name === name){
+                throw "ERROR: Name is already taken!"
+            }
+        }
         for(let i = 0; i < items.length; i++){
             if(!ObjectID.isValid(items[i])){
                 throw "ERROR: Invalid items input";
@@ -100,6 +105,9 @@ module.exports = {
       async getAll() {
         const listCollection = await lists();
         const listList = await listCollection.find({}).toArray();
+        if(listList === []){
+            throw "ERROR: There are no reading lists yet!"
+        }
         return listList;
       },
 

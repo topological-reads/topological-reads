@@ -3,13 +3,22 @@ const mongoCollections = require('../config/mongoCollections');
 const users = mongoCollections.users;
 const books = mongoCollections.books;
 //const groups = mongoCollections.groups;
-const lists = mongoCollections.lists;
+//const lists = mongoCollections.lists;
 
 module.exports = {
     async create(name, email, read, groups, lists, listsFollowing, 
       usersFollowing, password, invitations){ 
         if(!name || typeof(name) !== 'string' || name.trim() === ""){
             throw "ERROR: Invalid name input";
+        }
+        let users_list = await this.getAll();
+        for(let i = 0; i < users_list.length; i++){
+          if(users_list[i].name === name){
+            throw `ERROR: User with name ${name} is already in the system`
+          }
+          if(users_list[i].email === email){
+            throw `ERROR: User with email ${email} is already in the system`
+          }
         }
         if(!email || typeof(email) !== 'string' || email.trim() === ""){
             throw "ERROR: Invalid email input";
@@ -21,8 +30,8 @@ module.exports = {
 
         const userCollection = await users();
         const bookCollection = await books();
-       //const groupCollection = await groups();
-        // const listsCollection = await lists();
+        //const groupCollection = await groups();
+        //const listsCollection = await lists();
 
         for(elem of read) {
           if(!ObjectID.isValid(elem)) {
@@ -129,6 +138,9 @@ module.exports = {
       async getAll() {
         const userCollection = await users();
         const userList = await userCollection.find({}).toArray();
+        if(userList === []){
+          throw 'ERROR: There are no users in this database'
+        }
         return userList
       },
 
@@ -180,7 +192,6 @@ module.exports = {
         if (!updatedInfo.matchedCount && !updatedInfo.modifiedCount){
           throw 'Update failed';
         }
-  
         return await this.get(id);
       },
 };

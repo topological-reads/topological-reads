@@ -8,6 +8,12 @@ module.exports = {
         if(!title || typeof(title) !== 'string' || title.trim() === ""){
           throw "ERROR: Invalid title input";
         }
+        let books_list = await this.getAll();
+        for(let i = 0; i < books_list.length; i++){
+          if(books_list[i].isbn === isbn && !isbn && isbn !== 'N/A' && isbn !== ''){
+            throw "ERROR: ISBN already in database"
+          }
+        }
         if(!isbn || typeof(isbn) !== 'string' || isbn.trim() === ""){
           throw "ERROR: Invalid isbn input";
         }
@@ -61,6 +67,9 @@ module.exports = {
       async getAll() {
         const bookCollection = await books();
         const bookList = await bookCollection.find({}).toArray();
+        if(bookList === []){
+          throw "ERROR: There are no books in this database";
+        }
         return bookList;
       },
 
