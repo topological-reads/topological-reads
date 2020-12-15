@@ -5,6 +5,9 @@ const books = mongoCollections.books;
 //const groups = mongoCollections.groups;
 //const lists = mongoCollections.lists;
 
+const bcrypt = require('bcryptjs');
+const saltRounds = 10;
+
 module.exports = {
     async create(name, email, read, groups, lists, listsFollowing, 
       usersFollowing, password, invitations){ 
@@ -117,6 +120,8 @@ module.exports = {
           // }
         }
 
+        let hashedPass = await bcrypt.hash(password, saltRounds)
+
         let newuser = {
           name: name.trim(),
           email: email.trim(),
@@ -125,7 +130,7 @@ module.exports = {
           lists: lists,
           listsFollowing: listsFollowing,
           usersFollowing : usersFollowing,
-          password: password,
+          password: hashedPass,
           invitations: invitations
         };
         const insertInfo = await userCollection.insertOne(newuser);
@@ -151,6 +156,16 @@ module.exports = {
         const userCollection = await users();
         const user1 = await userCollection.findOne({ _id: id});
         if (user1 === null) throw 'ERROR: No user with that id';
+        return user1;
+      },
+
+      async getByName(name) {
+        if (!name) throw 'ERROR: You must provide an name to search for';
+        // if (typeof(name) !== 'object') throw 'ERROR: name is not an object';
+        //if(!ObjectID.isValid(name)) throw 'ERROR: Invalid object name'
+        const userCollection = await users();
+        const user1 = await userCollection.findOne({name});
+        if (user1 === null) throw 'ERROR: No user with that name';
         return user1;
       },
 
