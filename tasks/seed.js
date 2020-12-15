@@ -36,6 +36,19 @@ async function main() {
     [], [], [], [], "password", [])
   const user1_id = user1._id
   console.log(user1);
+
+  console.log("Making user 2")
+  const user2 = await users.create("test","test@test.com",[book1_id], 
+    [], [], [], [], "test", [])
+
+  console.log("Making user 3")
+  const user3 = await users.create("test2","test2@test.com",[book1_id], 
+    [], [], [], [], "test", [])
+
+  console.log("Making user 4")
+  const user4 = await users.create("test3","test3@test.com",[book1_id], 
+    [], [], [], [], "test", [])
+
   const user_getAll = await users.getAll();
   console.log(user_getAll);
 
