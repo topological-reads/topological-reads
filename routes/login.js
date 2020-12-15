@@ -1,11 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
-
 const usersData = require('../data/users');
-//const usersData = data.users;
 
-const usersList = require('../users');
 
 function isNonEmptyString (element) {
     if (typeof element == 'string') {
