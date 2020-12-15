@@ -106,7 +106,7 @@ label {
 	color: #ff0000;
 }
 
-.book {
+.book, .user{
 	background:rgb(233, 232, 232);
 }
 

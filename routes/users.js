@@ -2,15 +2,43 @@ const express = require('express'); // Use for testing
 const router = express.Router();
 const data = require('../data');
 const usersData = data.users;
+const bookData = data.books;
 const { ObjectID } = require('mongodb');
 router.get('/', async (req, res) => {
+  if (!req.session.user){
+    return res.status(404).render('../views/error', {errorMessage :'You are not authenticate to view this information.'});
+  }
   try {
-    const user = await usersData.getAll();
-    console.log(user);
-    res.json(user);
+    const users = await usersData.getAll();
+
+    res.render("../views/users", {body: users})
   } catch (e) {
     console.log(e);
     res.status(404).json({ error: 'User not found' });
+  }
+});
+
+router.get('/:userid', async (req, res) => {
+  if (!req.session.user){
+    return res.status(404).render('../views/error', {errorMessage :'You are not authenticate to view this information.'});
+  }
+  if (!req.params.userid || !ObjectID.isValid(req.params.userid)) {
+    return res.status(400).json({ error: 'You must Supply a valid user ID' });
+  }
+  try {
+    const user = await usersData.get(ObjectID(req.params.userid));
+
+    let readBooks = [];
+
+    for(book of user.read) {
+      readBooks.push(await bookData.get(book))
+    }
+
+    //missing groups
+    res.render("../views/user", {body: user, readBooks: readBooks})
+  } catch (e) {
+    console.log(e);
+    res.status(404).render("../views/user", {})
   }
 });
 
@@ -25,6 +53,25 @@ router.post('/addBook/:id', async (req, res) => {
   try {
     //addBook function handles making strings into ObjectIDs
     const addUser = await usersData.addBook(req.session.user._id, req.params.id);
+    return res.status(200)
+  } catch (e) {
+    console.log(e);
+    res.status(404).json({ error: e });
+  }
+
+});
+
+router.post('/followUser/:id', async (req, res) => {
+  if (!req.params.id) {
+    return res.status(400).json({ error: 'You must Supply an ID' });
+  }
+
+  if (!req.session.user){
+    return res.status(404).render('../views/error', {errorMessage :'You are not authenticate to view this information.'});
+  }
+  try {
+    //followUser function handles making strings into ObjectIDs
+    const followUser = await usersData.followUser(req.session.user._id, req.params.id);
     return res.status(200)
   } catch (e) {
     console.log(e);

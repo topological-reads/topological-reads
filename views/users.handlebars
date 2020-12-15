@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/public/css/style.css">
+  <title>Users</title>
+</head>
+  <body>
+    <div class="topnav">
+      <a href="/home">Home</a>
+      <a href="books">Books</a>
+      <a class="active" href="users">Users</a>
+      <a href="groups">Groups</a>
+      <a href="/logout">Logout</a>
+    </div>
+
+    
+
+      {{#if body}}
+        {{#each body}}
+          <div class="user">
+            <ul>
+              <li>Username: {{this.name}}</li>
+              <li><a href="/users/{{this._id}}">Profile</a></li>
+              <form method="POST" action="/users/followUser/{{this._id}}" class="followUser">
+                <button id="follow-user" type="submit">Follow this user</button>
+              </form>
+            </ul>
+          </div>
+        {{/each}}
+      {{else}}
+        <div>
+          <h2>No users found.</h2>
+        </div>
+      {{/if}}
+    </main>
+  </body>
+</html>

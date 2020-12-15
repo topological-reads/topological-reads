@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/public/css/style.css">
+  <script src="/public/showhide.js"></script>
+  <title>{{body.name}}</title>
+</head>
+  <body>
+    <div class="topnav">
+      <a href="/home">Home</a>
+      <a href="books">Books</a>
+      <a class="active" href="users">Users</a>
+      <a href="groups">Groups</a>
+      <a href="/logout">Logout</a>
+    </div>
+
+    <div>
+      <h1>User Information</h1>
+      <h5>Username: {{body.name}}<h5>
+    </div>
+
+      {{#if body}}
+          <div>
+            <div>
+                <h1>Read Books</h1>
+                {{#if readBooks}}
+                <button onclick="showHide('readBooks')">Show / Hide Content</button>
+                <ol id="readBooks">
+                    {{#each readBooks}}
+                    <li>{{this.title}} by {{this.author}}</li>
+                    {{/each}}
+                </ol>
+                {{else}}
+                <p>No books read.<p>
+                {{/if}}
+            </div>
+
+            <div>
+                <h1>Group Membership</h1>
+                <button onclick="showHide('groupMembership')">Show / Hide Content</button>
+                <div id="groupMembership">
+                    <h5>Current Membership</h5>
+                    <ul>
+                    {{#if inGroups}}
+                        {{#each inGroups}}
+
+                        {{/each}}
+                    {{else}}
+                        <h5>{{body.name}} is not a member of any groups.</h5>
+                    {{/if}}
+                    </ul>
+                </div>
+            </div>
+
+            <div>
+                <h1>Reading Lists</h1>
+                {{#if readingLists}}
+                <button onclick="showHide('myLists')">Show / Hide Content</button>
+                <ul id="myLists">
+                    {{#each readingLists}}
+
+                    {{/each}}
+                </ul>
+                {{else}}
+                <p>No lists created by {{body.name}}.<p>
+                {{/if}}
+            </div>
+          </div>
+      {{else}}
+        <div>
+          <h2>User not found.</h2>
+        </div>
+      {{/if}}
+      <a href="/">Return to the users list</a>
+    </main>
+  </body>
+</html>

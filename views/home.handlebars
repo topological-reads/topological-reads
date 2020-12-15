@@ -4,14 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="/public/css/style.css">
-  <script src="public/showhide.js"></script>
-  <title>Private</title>
+  <script src="/public/showhide.js"></script>
+  <title>Home</title>
 </head>
   <body>
     <div class="topnav">
       <a class="active" href="/home">Home</a>
-      <a href="authors">Authors</a>
       <a href="books">Books</a>
+      <a href="users">Users</a>
       <a href="groups">Groups</a>
       <a href="/logout">Logout</a>
     </div>
@@ -25,61 +25,85 @@
 
       <div>
         <h1>Read Books</h1>
-        <button onclick="showHide('readBooks')">Show / Hide Content</button>
-        <ol id="readBooks">
-          {{#each readBooks}}
-            <li>{{this.title}} by {{this.author}}</li>
-          {{/each}}
-        </ol>
+        {{#if readBooks}}
+          <button onclick="showHide('readBooks')">Show / Hide Content</button>
+          <ol id="readBooks">
+            {{#each readBooks}}
+              <li>{{this.title}} by {{this.author}}</li>
+            {{/each}}
+          </ol>
+        {{else}}
+          <p>No books read.<p>
+        {{/if}}
       </div>
 
       <div>
         <h1>Group Membership</h1>
-        <button onclick="showHide('groupMembership')">Show / Hide Content</button>
-        <div id="groupMembership">
-          <h5>Current Membership</h5>
-          <ul>
-            {{#each inGroups}}
+          <button onclick="showHide('groupMembership')">Show / Hide Content</button>
+          <div id="groupMembership">
+            <h5>Current Membership</h5>
+            <ul>
+              {{#if inGroups}}
+                {{#each inGroups}}
 
-            {{/each}}
-          </ul>
-          <h5>Invitations</h5>
-          <ul>
-            {{#each invitations}}
+                {{/each}}
+              {{else}}
+                <p>You are not the member of any groups.</p>
+              {{/if}}
+            </ul>
+            <h5>Invitations</h5>
+            <ul>
+              {{#if invitations}}
+                {{#each invitations}}
 
-            {{/each}}
-          </ul>
-        </div>
+                {{/each}}
+              {{else}}
+                <p>No invitations found.</p>
+              {{/if}}
+            </ul>
+          </div>
       </div>
 
       <div>
         <h1>My Reading Lists</h1>
-        <button onclick="showHide('myLists')">Show / Hide Content</button>
-        <ul id="myLists">
-          {{#each myLists}}
+        {{#if myLists}}
+          <button onclick="showHide('myLists')">Show / Hide Content</button>
+          <ul id="myLists">
+            {{#each myLists}}
 
-          {{/each}}
-        </ul>
+            {{/each}}
+          </ul>
+        {{else}}
+          <p>No lists created.<p>
+        {{/if}}
       </div>
 
       <div>
         <h1>Followed Lists</h1>
-        <button onclick="showHide('followedLists')">Show / Hide Content</button>
-        <ul id="followedLists">
-          {{#each followedLists}}
+        {{#if followedLists}}
+          <button onclick="showHide('followedLists')">Show / Hide Content</button>
+          <ul id="followedLists">
+            {{#each followedLists}}
 
-          {{/each}}
-        </ul>
+            {{/each}}
+          </ul>
+        {{else}}
+          <p>No lists followed.<p>
+        {{/if}}
       </div>
 
       <div>
         <h1>Followed Users</h1>
-        <button onclick="showHide('followedUsers')">Show / Hide Content</button>
-        <ul id="followedUsers">
-          {{#each followedUsers}}
-
-          {{/each}}
-        </ul>
+        {{#if followedUsers}}
+          <button onclick="showHide('followedUsers')">Show / Hide Content</button>
+          <ul id="followedUsers">
+            {{#each followedUsers}}
+              <li><a href="users/{{this._id}}">{{this.name}}</a></li>
+            {{/each}}
+          </ul>
+        {{else}}
+          <p>No users followed.<p>
+        {{/if}}
       </div>
     </main>
   </body>

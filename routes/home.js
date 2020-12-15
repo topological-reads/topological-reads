@@ -13,13 +13,23 @@ router.get('/', async (req, res) => {
   try {
     let user = await usersData.get(ObjectID(req.session.user._id));
 
-    let readBooks = []
+    let readBooks = [];
 
     for(book of user.read) {
       readBooks.push(await bookData.get(book))
     }
 
-    return res.render('../views/home', {user : user, readBooks: readBooks});
+    let followedUsers = [];
+
+    for(user of user.usersFollowing) {
+      followedUsers.push(await usersData.get(user))
+    }
+
+    return res.render('../views/home', {
+      user : user, 
+      readBooks: readBooks, 
+      followedUsers: followedUsers
+    });
   } catch (e) {
     console.log(e)
     return res.status(404).json({ error: 'user not found' });
