@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/public/css/style.css">
+  <title>Login</title>
+</head>
+    <body>
+      <main>
+        <article class = "credentials">
+          <h1>Login</h1>
+          <p class="error">{{errorMessage}}</p>
+          <form action="/login" id="login-form" method="POST" class="credentials">
+            <label>
+              Username
+              <input id="username" type="text" name="username" placeholder="username" class="full-width-input"/>
+            </label>
+            <br>
+            <label>
+              Password
+              <input id="password" type="text" name="password" placeholder="password" class="full-width-input"/>
+            </label>     
+            <br>
+              <button type="submit">Login</button>
+          </form>
+        </article>
+      </main>
+  </body>
+</html>
+
