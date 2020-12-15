@@ -66,7 +66,7 @@ module.exports = {
 
       async getAll() {
         const bookCollection = await books();
-        const bookList = await bookCollection.find({}).toArray();
+        const bookList = await bookCollection.find({}, {sort: "title"}).toArray();
         if(bookList === []){
           throw "ERROR: There are no books in this database";
         }
@@ -81,6 +81,23 @@ module.exports = {
         const book1 = await bookCollection.findOne({ _id: id});
         if (book1 === null) throw 'ERROR: No book with that id';
         return book1;
+      },
+
+      async search(searchTerm) {
+        if (!searchTerm) throw 'ERROR: You must provide a term to search for';
+        if (typeof(searchTerm) !== 'string') throw 'ERROR: searchTerm is not a string';
+        const bookCollection = await books();
+
+        const bookSearch = {
+            $or:[
+              {title: new RegExp(searchTerm, "i")},
+              {author:new RegExp(searchTerm, "i")},
+              {isbn: searchTerm}
+            ]
+        }
+
+        const booksList = await bookCollection.find(bookSearch, {sort: "title"}).toArray();
+        return booksList;
       },
 
       async remove(id) {

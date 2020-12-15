@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/public/css/style.css">
+  <title>Home</title>
+</head>
+  <body>
+    <div class="topnav">
+      <a href="/home">Home</a>
+      <a href="authors">Authors</a>
+      <a class="active" href="books">Books</a>
+      <a href="groups">Groups</a>
+      <a href="/logout">Logout</a>
+    </div>
+
+    <main>
+      <form method="POST" action="/books" class="new-search">
+        <label for="search-term">Search Term</label>
+        <input id="search-term" type="text" name="searchTerm"/>
+        <button id="doSearch" type="submit">Search</button>
+      </form>
+
+      <p class="error">{{errorMessage}}</p>
+     
+      {{#if body}}
+        {{#each body}}
+          <div class="book">
+            <ul>
+              <li>Title: {{this.title}}</li>
+              <li>ISBN: {{this.isbn}}</li>
+              <li>Author: {{this.author}}</li>
+              <li>Average Rating: {{this.averageRating}}</li>
+              <li>Ratings:</li>
+              {{#each this.ratings}}
+                <ul class="book-rating">
+                  <li>User: {{this.[0]}}</li>
+                  <li>Rating: {{this.[1]}}</li>
+                </ul>
+              {{/each}}
+              <li>Summary: {{this.summary}}</li>
+            </ul>
+          </div>
+        {{/each}}
+      {{else}}
+        <div>
+          <h2>No books found.</h2>
+        </div>
+      {{/if}}
+    </main>
+  </body>
+</html>
