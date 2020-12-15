@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="/public/css/style.css">
+  <script src="public/showhide.js"></script>
   <title>Private</title>
 </head>
   <body>
@@ -16,10 +17,70 @@
     </div>
 
     <main>
-      <h1>User Data</h1>
-      <div>{{user._id}}</div>
-      <div>{{user.name}}</div>
-      <div>{{user.email}}</div>
+      <div>
+        <h1>User Information</h1>
+        <h5>Username: {{user.name}}<h5>
+        <h5>E-Mail: {{user.email}}<h5>
+      </div>
+
+      <div>
+        <h1>Read Books</h1>
+        <button onclick="showHide('readBooks')">Show / Hide Content</button>
+        <ol id="readBooks">
+          {{#each readBooks}}
+            <li>{{this.title}} by {{this.author}}</li>
+          {{/each}}
+        </ol>
+      </div>
+
+      <div>
+        <h1>Group Membership</h1>
+        <button onclick="showHide('groupMembership')">Show / Hide Content</button>
+        <div id="groupMembership">
+          <h5>Current Membership</h5>
+          <ul>
+            {{#each inGroups}}
+
+            {{/each}}
+          </ul>
+          <h5>Invitations</h5>
+          <ul>
+            {{#each invitations}}
+
+            {{/each}}
+          </ul>
+        </div>
+      </div>
+
+      <div>
+        <h1>My Reading Lists</h1>
+        <button onclick="showHide('myLists')">Show / Hide Content</button>
+        <ul id="myLists">
+          {{#each myLists}}
+
+          {{/each}}
+        </ul>
+      </div>
+
+      <div>
+        <h1>Followed Lists</h1>
+        <button onclick="showHide('followedLists')">Show / Hide Content</button>
+        <ul id="followedLists">
+          {{#each followedLists}}
+
+          {{/each}}
+        </ul>
+      </div>
+
+      <div>
+        <h1>Followed Users</h1>
+        <button onclick="showHide('followedUsers')">Show / Hide Content</button>
+        <ul id="followedUsers">
+          {{#each followedUsers}}
+
+          {{/each}}
+        </ul>
+      </div>
     </main>
   </body>
 </html>

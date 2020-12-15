@@ -40,6 +40,9 @@
                 </ul>
               {{/each}}
               <li>Summary: {{this.summary}}</li>
+              <form method="POST" action="/users/addBook/{{this._id}}" class="readBook">
+                <button id="read-book" type="submit">Add Book to Read Books</button>
+              </form>
             </ul>
           </div>
         {{/each}}
