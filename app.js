@@ -44,7 +44,7 @@ function checkSession(req, res, next) {
 };
 
 app.get('/', checkSession, function(req, res){
-  return res.redirect('./private');
+  return res.redirect('./home');
 });
 
 configRoutes(app);

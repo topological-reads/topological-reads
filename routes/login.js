@@ -15,7 +15,7 @@ router.post('/', async (req, res) => {
     
     console.log(req.body.username, req.body.password)
     if(!isNonEmptyString(req.body.username) || !isNonEmptyString(req.body.password)){
-        return res.status(404).render('../views/error', {errorMessage :'You need to sumbit usernames and passwords as strings that are not empty.'});
+        return res.status(404).render('../views/login', {errorMessage :'You need to sumbit usernames and passwords as strings that are not empty.'});
     }
     
     const { username, password } = req.body;
@@ -32,7 +32,7 @@ router.post('/', async (req, res) => {
     if (match) {
         userObject.password
         req.session.user = userObject
-        return res.redirect('/private');
+        return res.redirect('/home');
 	} else {
         return res.status(401).render('../views/login', {errorMessage :'User or Password are invalid.'});
 	}    

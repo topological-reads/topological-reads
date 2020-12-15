@@ -1,5 +1,5 @@
 const logoutRoutes = require('./logout');
-const privateRoutes = require('./private');
+const homeRoutes = require('./home');
 const loginRoutes = require('./login');
 const booksRoutes = require('./books'); 
 const authorsRoutes = require('./authors'); 
@@ -13,7 +13,7 @@ const usersRoutes = require('./users');
 
 const constructorMethod = (app) => {
   app.use('/logout', logoutRoutes);
-  app.use('/private', privateRoutes);
+  app.use('/home', homeRoutes);
   app.use('/login', loginRoutes);
   app.use('/books', booksRoutes);
   app.use('/authors', authorsRoutes);

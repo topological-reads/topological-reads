@@ -7,15 +7,19 @@
   <title>Private</title>
 </head>
   <body>
+    <div class="topnav">
+      <a class="active" href="/home">Home</a>
+      <a href="authors">Authors</a>
+      <a href="books">Books</a>
+      <a href="groups">Groups</a>
+      <a href="/logout">Logout</a>
+    </div>
+
     <main>
       <h1>User Data</h1>
       <div>{{user._id}}</div>
       <div>{{user.name}}</div>
       <div>{{user.email}}</div>
-      {{!-- <div>{{user.lastName}}</div>
-      <div>{{user.profession}}</div>
-      <div>{{user.bio}}</div> --}}
-      <a href="/logout">Logout</a>
     </main>
   </body>
 </html>

@@ -6,7 +6,7 @@ router.get('/', async (req, res) => {
     return res.status(404).render('../views/error', {errorMessage :'You are not authenticate to view this information.'});
   }
 
-  return res.render('../views/private', {user : req.session.user});
+  return res.render('../views/home', {user : req.session.user});
 });
 
 module.exports = router;
