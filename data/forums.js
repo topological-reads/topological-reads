@@ -5,7 +5,7 @@ const threadModule = require('./threads');
 
 module.exports = {
     async create(group) {
-        if (!group || !ObjectID(group)) { throw `Error: there was an improper group: ${group} parameter when creating a forum.`}
+        if (!group || !ObjectID.isValid(group)) { throw `Error: there was an improper group: ${group} parameter when creating a forum.`}
         let newForum = {
             group: group,
             threads: []
@@ -17,7 +17,7 @@ module.exports = {
         return insertForum;
     },
     async read(id) {
-        if (!id || !ObjectID(id)) { throw `Error: the forum parameter id for read() was not correct.` };
+        if (!id || !ObjectID.isValid(id)) { throw `Error: the forum parameter id for read() was not correct.` };
         const allForums = await forums();
         try {
             let currentForum = await allForums.findOne({ _id: id });
@@ -27,7 +27,7 @@ module.exports = {
         }
     },
     async update(id, updatedBody) {
-        if (!id || !ObjectID(id)) { throw `Error: the forum parameter id for update() was not correct.` };
+        if (!id || !ObjectID.isValid(id)) { throw `Error: the forum parameter id for update() was not correct.` };
         if (!updatedBody || typeof updatedBody !== `object`) { throw `Error: the forum parameter updatedBody for update() was not correct.`}
         if (!updatedBody.group || !ObjectID(updatedBody.group)) { throw `Error: the updatedBody did not have the proper group: ${updatedBody.group}`};
         const thisForum = await this.read(id);
@@ -41,7 +41,7 @@ module.exports = {
         return await this.read(id);
     },
     async delete(id) {
-        if (!id || !ObjectID(id)) { throw `Error: the forum parameter forumId for insertThread() was not correct.` };
+        if (!id || !ObjectID.isValid(id)) { throw `Error: the forum parameter forumId for insertThread() was not correct.` };
         const thisForum = await this.read(id);
         const allForums = await forums();
         for( let thread of thisForum.threads) {
