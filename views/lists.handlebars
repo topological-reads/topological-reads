@@ -28,13 +28,13 @@
         {{#each body}}
             <div class="lists">
                 <ul>
+                    <li>Name: <a href="lists/{{this._id}}">{{this.name}}</a></li>
                     <li>Owners:</li>
                     <ul>
                         {{#each this.owners}}
                             <li>{{this.name}}</li>
                         {{/each}}
                     </ul>
-                    <li><a href="lists/{{this._id}}">{{this.name}}</a></li>
                 </ul>
             </div>
         {{/each}}
