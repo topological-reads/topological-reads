@@ -23,6 +23,7 @@ module.exports = {
             throw `ERROR: User with email ${email} is already in the system`
           }
         }
+        name = name.toLowerCase();
         if(!email || typeof(email) !== 'string' || email.trim() === ""){
             throw "ERROR: Invalid email input";
         }

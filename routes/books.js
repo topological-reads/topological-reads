@@ -8,7 +8,7 @@ const listsData = data.lists;
 
 router.get('/', async (req, res) => {
   if (!req.session.user){
-    return res.status(404).render('../views/error', {errorMessage :'You are not authenticate to view this information.'});
+    return res.status(404).render('../views/error', {errorMessage :'You are not authenticated to view this information.'});
   }
 
   try {
