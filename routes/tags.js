@@ -10,8 +10,6 @@ router.get('/', async (req, res) => {
     const tags = await tagsData.getAll();
     const groups = await groupsData.getAll();
     const lists = await listsData.getAll();
-    console.log(groups);
-    console.log(lists)
     let g = []
     let l = []
     for(tag of tags){
