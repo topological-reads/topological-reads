@@ -124,6 +124,7 @@ module.exports = {
         if (typeof(id) !== 'object') throw 'ERROR: id is not a string';
         if(!ObjectID.isValid(id)) throw 'ERROR: Invalid object id';
         const listCollection = await lists();
+        const bookCollection = await books();
         const deletionInfo = await bookCollection.removeOne({ _id: id});
         if (deletionInfo.deletedCount === 0) {
          throw `Could not delete book with id of ${id}`;
@@ -138,6 +139,7 @@ module.exports = {
         if(!ObjectID.isValid(id)) throw 'ERROR: Invalid object id';
         if(typeof(list) != 'object') throw 'ERROR: Invalid list';
         let updatedList = {};
+        let bookCollection = await books();
         if(list.name){
           if(typeof(list.name) !== 'string' || list.name.trim() === ""){
             throw "ERROR: Invalid input for name"
@@ -149,7 +151,6 @@ module.exports = {
             if(!Array.isArray(list.items)){
                 throw "ERROR: Invalid input for items"
             }
-            let bookCollection = await books();
             for(let i = 0; i < list.items.length; i++){
                 if(!ObjectID.isValid(list.items[i])){
                     throw "ERROR: Invalid items input";
@@ -159,6 +160,7 @@ module.exports = {
                     throw 'ERROR: No book with the ids in your list of items';
                 } 
             }
+            updatedList.items = list.items
         }
         if(list.order){
             if(!Array.isArray(list.order)){
@@ -173,14 +175,15 @@ module.exports = {
                     throw "ERROR: Invalid order input";
                 }
                 let bookTwo = await bookCollection.findOne({ _id: ObjectID(pair[0])});
-                if (bookTwo === null || !items.includes(pair[0])){
+                if (bookTwo === null || !list.items.includes(pair[0])){
                     throw 'ERROR: Invalid book in orders pair';
                 } 
                 let bookThree = await bookCollection.findOne({ _id: ObjectID(pair[1])});
-                if (bookThree === null || !items.includes(pair[1])){
+                if (bookThree === null || !list.items.includes(pair[1])){
                     throw 'ERROR: Invalid book in orders pair';
                 } 
             }
+            updatedList.order = list.order;
         }
         if(list.owners){
             if(!Array.isArray(list.owners)){
@@ -198,6 +201,7 @@ module.exports = {
                     throw 'ERROR: No book or user in database with your input';
                 } 
             }
+            updatedList.owners = list.owners;
         }
         if(list.tags){
             if(!Array.isArray(list.tags)){
@@ -213,16 +217,19 @@ module.exports = {
                     throw 'ERROR: No tag with the ids in your list of tags';
                 } 
             }
+            updatedList.tags = list.tags;
         }
 
         if(updatedList === {}){
             throw "ERROR: The list does not have updatable components"
         }
         const listCollection = await lists();
+        console.log(updatedList)
         const updatedInfo = await listCollection.updateOne(
           {_id: id},
           { $set: updatedList }
         );
+        
         if (!updatedInfo.matchedCount && !updatedInfo.modifiedCount){
           throw 'Update failed';
         }

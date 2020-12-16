@@ -4,6 +4,7 @@ const router = express.Router();
 const data = require('../data');
 const booksData = data.books;
 const userData = data.users;
+const listsData = data.lists;
 
 router.get('/', async (req, res) => {
   if (!req.session.user){
@@ -12,14 +13,18 @@ router.get('/', async (req, res) => {
 
   try {
     let book = await booksData.getAll();
+    let lists = await listsData.getAll();
 
+    console.log(lists)
+    
     for (elem of book) {
       for(pair of elem.ratings) {
         pair[0] = (await userData.get(pair[0])).name
       }
     }
 
-    res.render("../views/books", {body: book})
+    res.render("../views/books", {body : book, lists : lists})
+
   } catch (e) {
     console.log(e);
     res.status(404).json({ error: e });
