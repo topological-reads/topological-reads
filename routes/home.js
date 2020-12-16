@@ -7,6 +7,8 @@ const router = express.Router();
 const usersData = data.users;
 const bookData = data.books;
 const listData = data.lists;
+const groupData = data.groups;
+
 
 router.get('/', async (req, res) => {
   if (!req.session.user){
@@ -17,8 +19,8 @@ router.get('/', async (req, res) => {
     let user = await usersData.get(ObjectID(req.session.user._id));
 
     let readBooks = [];
-
-    for(book of user.read) {
+    // Added let so that we do not declare a global variable unnecessarily
+    for(let book of user.read) {
       readBooks.push(await bookData.get(book))
     }
 
@@ -30,22 +32,25 @@ router.get('/', async (req, res) => {
 
     let followedUsers = [];
 
-    for(elem of user.usersFollowing) {
+    for(let elem of user.usersFollowing) {
       followedUsers.push(await usersData.get(elem))
     }
 
     let listOfLists = [];
-
-    for(list of user.lists) {
+    
+    for(let list of user.lists) {
       listOfLists.push(await listData.get(ObjectID(list)))
     }
+    
+    let memberGroups = await groupData.getGroupsWhereUserIsMember(ObjectID(req.session.user._id));
 
     return res.render('../views/home', {
       user : user, 
       readBooks: readBooks,
       readingBooks: readingBooks,
       followedUsers: followedUsers,
-      myLists: listOfLists
+      myLists: listOfLists,
+      memberGroups : memberGroups
     });
   } catch (e) {
     console.log(e)

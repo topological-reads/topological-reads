@@ -62,9 +62,9 @@
           <div id="groupMembership">
             <h5>Current Membership</h5>
             <ul>
-              {{#if inGroups}}
-                {{#each inGroups}}
-
+              {{#if memberGroups}}
+                {{#each memberGroups}}
+                  <li>{{this.name}}</li>
                 {{/each}}
               {{else}}
                 <p>You are not the member of any groups.</p>
