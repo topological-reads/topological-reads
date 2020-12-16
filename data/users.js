@@ -2,8 +2,8 @@ const { ObjectID } = require('mongodb'); // Edit
 const mongoCollections = require('../config/mongoCollections');
 const users = mongoCollections.users;
 const books = mongoCollections.books;
-//const groups = mongoCollections.groups;
-//const lists = mongoCollections.lists;
+const groupData = mongoCollections.groups;
+const listData = mongoCollections.lists;
 
 const bcrypt = require('bcryptjs');
 const saltRounds = 10;
@@ -34,8 +34,8 @@ module.exports = {
 
         const userCollection = await users();
         const bookCollection = await books();
-        //const groupCollection = await groups();
-        //const listsCollection = await lists();
+        const groupCollection = await groupData();
+        const listsCollection = await listData();
 
         for(elem of read) {
           if(!ObjectID.isValid(elem)) {
@@ -55,10 +55,10 @@ module.exports = {
           if(!ObjectID.isValid(elem)) {
             throw `ERROR: ObjectID ${elem.toString()} in groups list is invalid`;
           }
-          // const group1 = await groupCollection.findOne({ _id: elem });
-          // if (group1 === null) {
-          //   throw `ERROR: groups element ${elem} has a group ID that is not in the db`;
-          // }
+          const group1 = await groupCollection.findOne({ _id: elem });
+          if (group1 === null) {
+            throw `ERROR: groups element ${elem} has a group ID that is not in the db`;
+          }
         }
 
         if(!lists || !Array.isArray(lists)){
@@ -69,10 +69,10 @@ module.exports = {
           if(!ObjectID.isValid(elem)) {
             throw `ERROR: ObjectID ${elem.toString()} in reading list is invalid`;
           }
-          // const lists1 = await listsCollection.findOne({ _id: elem });
-          // if (lists1 === null) {
-          //   throw `ERROR: lists element ${elem} has an ID that is not in the db`;
-          // }
+          const lists1 = await listsCollection.findOne({ _id: elem });
+          if (lists1 === null) {
+            throw `ERROR: lists element ${elem} has an ID that is not in the db`;
+          }
         }
 
         if(!listsFollowing || !Array.isArray(listsFollowing)){
@@ -83,10 +83,10 @@ module.exports = {
           if(!ObjectID.isValid(elem)) {
             throw `ERROR: ObjectID ${elem.toString()} in listsFollowing is invalid`;
           }
-          // const lists1 = await listsCollection.findOne({ _id: elem });
-          // if (lists1 === null) {
-          //   throw `ERROR: listsFollowing element ${elem} has an ID that is not in the db`;
-          // }
+          const lists1 = await listsCollection.findOne({ _id: elem });
+          if (lists1 === null) {
+            throw `ERROR: listsFollowing element ${elem} has an ID that is not in the db`;
+          }
         }
 
         if(!usersFollowing || !Array.isArray(usersFollowing)){
@@ -115,10 +115,10 @@ module.exports = {
           if(!ObjectID.isValid(elem)) {
             throw `ERROR: ObjectID ${elem.toString()} in invitations list is invalid`;
           }
-          // const group1 = await groupCollection.findOne({ _id: elem });
-          // if (group1 === null) {
-          //   throw `ERROR: invitations element ${elem} has an ID that is not in the db`;
-          // }
+          const group1 = await groupCollection.findOne({ _id: elem });
+          if (group1 === null) {
+            throw `ERROR: invitations element ${elem} has an ID that is not in the db`;
+          }
         }
 
         let hashedPass = await bcrypt.hash(password, saltRounds)
@@ -215,6 +215,24 @@ module.exports = {
         );
         if (!updatedUser.matchedCount && !updatedUser.modifiedCount){
           throw 'addBook failed';
+        }
+        return this.get(ObjectID(id));
+      },
+
+      //handles id and list_id as strings
+      async addList(id, list_id) {
+        if (!id) throw 'ERROR: You must provide an id to search for';
+        if (!list_id) throw 'ERROR: You must provide an book_id to add';
+        if(!ObjectID.isValid(id)) throw 'ERROR: Invalid id';
+        if(!ObjectID.isValid(list_id)) throw 'ERROR: Invalid book_id id';
+
+        const userCollection = await users();
+        const updatedUser = await userCollection.updateOne(
+          {_id: ObjectID(id)},
+          {$push: {lists: ObjectID(list_id)}}
+        );
+        if (!updatedUser.matchedCount && !updatedUser.modifiedCount){
+          throw 'addList failed';
         }
         return this.get(ObjectID(id));
       },

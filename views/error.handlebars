@@ -8,7 +8,11 @@
 </head>
     <body>
       <p class="error">{{errorMessage}}</p>
+      {{#if other}}
+      <a href="javascript:history.back()">Go Back</a>
+      {{else}}
       <a href="/">Back to login</a>
+      {{/if}}
   </body>
 </html>
 

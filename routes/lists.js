@@ -2,12 +2,25 @@ const express = require('express'); // Use for testing
 const router = express.Router();
 const data = require('../data');
 const listsData = data.lists;
+const userData = data.users;
 const { ObjectID } = require('mongodb'); // Edit
 
 router.get('/', async (req, res) => {
+  if (!req.session.user){
+    return res.status(404).render('../views/error', {errorMessage :'You are not authenticate to view this information.'});
+  }
   try {
     const lists = await listsData.getAll();
-    res.json(lists);
+
+    owners = [];
+
+    for(elem of lists) {
+      for(i=0; i<elem.owners.length; i++) {
+        elem.owners[i] = await userData.get(ObjectID(elem.owners[i]))
+      }
+    }
+    console.log(lists[0].owners[0]);
+    res.render("../views/lists", {body: lists, owners: owners});
   } catch (e) {
     console.log(e);
     res.status(404).json({ error: 'Lists not found' });
@@ -15,14 +28,18 @@ router.get('/', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
+  if (!req.session.user){
+    return res.status(404).render('../views/error', {errorMessage :'You are not authenticate to view this information.'});
+  }
   let list = req.body.listName;
   if(!list){
-    res.status(400).json({ error: 'You must provide a list name' });
+    res.status(400).render('../views/error', {other: true, errorMessage: "You must provide a list name!"});
     return;
   }
   try {
-    await listsData.create(list,[],[],[ObjectID(req.session.user._id)],[]);
-    // res.json(newlist);
+    let newList = await listsData.create(list,[],[],[ObjectID(req.session.user._id)],[]);
+    await userData.addList(req.session.user._id, newList._id)
+
     res.redirect('/books')
   } catch (e) {
       res.status(400).json({ error: e });
@@ -30,7 +47,24 @@ router.post('/', async (req, res) => {
 });
 
 router.get('/:id', async (req, res) => {
-  console.log(req.params.id)
+  if (!req.params.id) {
+    res.status(400).json({ error: 'You must Supply an ID' });
+    return;
+  }
+  if (!req.session.user){
+    return res.status(404).render('../views/error', {errorMessage :'You are not authenticate to view this information.'});
+  }
+
+  try {
+    let list = await listsData.get(ObjectID(req.params.id));
+    res.render('../views/list', {body: list});
+  } catch (e) {
+    console.log(e)
+    res.status(404).json({ error: 'list not found' });
+  }
+});
+
+router.get('/ajax/:id', async (req, res) => {
   if (!req.params.id) {
     res.status(400).json({ error: 'You must Supply an ID' });
     return;
@@ -44,13 +78,12 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-router.put('/:id', async (req, res) => {
+router.put('/ajax/:id', async (req, res) => {
   if (!req.params.id) {
     res.status(400).json({ error: 'You must Supply an ID' });
     return;
   }
   const updatedData = req.body;
-  // console.log(updatedData)
   if (!updatedData.name) {
     res.status(400).json({ error: 'You must supply all fields' });
     return;

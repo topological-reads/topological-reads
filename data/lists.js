@@ -224,7 +224,6 @@ module.exports = {
             throw "ERROR: The list does not have updatable components"
         }
         const listCollection = await lists();
-        console.log(updatedList)
         const updatedInfo = await listCollection.updateOne(
           {_id: id},
           { $set: updatedList }
