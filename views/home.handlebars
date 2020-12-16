@@ -66,6 +66,13 @@
 
       <div>
         <h1>My Reading Lists</h1>
+        <button onclick="showHide('myLists')">Show / Hide Content</button>
+        <!-- Form that will post to list route  -->
+        <form method="POST" action="/lists" class="new-search">
+          <label for="search-term">Create List</label>
+          <input id="search-term" type="text" name="listName"/>
+          <button type="submit">Create List</button>
+        </form>
         {{#if myLists}}
           <button onclick="showHide('myLists')">Show / Hide Content</button>
           <ul id="myLists">

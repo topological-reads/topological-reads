@@ -2,6 +2,7 @@ const express = require('express'); // Use for testing
 const router = express.Router();
 const data = require('../data');
 const listsData = data.lists;
+const { ObjectID } = require('mongodb'); // Edit
 
 router.get('/', async (req, res) => {
   try {
@@ -14,35 +15,28 @@ router.get('/', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
-  let list = req.body;
+  let list = req.body.listName;
   if(!list){
-    res.status(400).json({ error: 'You must provide an list' });
-    return;
-  }
-  if (!list.name) {
-    res.status(400).json({ error: 'You must provide an list name' });
-    return;
-  }
-
-  if(Object.keys(list).length !== 1){
-    res.status(400).json({ error: 'Too many inputs' });
+    res.status(400).json({ error: 'You must provide a list name' });
     return;
   }
   try {
-    const newlist = await listsData.create(list.name);
-    res.json(newlist);
+    await listsData.create(list,[],[],[ObjectID(req.session.user._id)],[]);
+    // res.json(newlist);
+    res.redirect('/books')
   } catch (e) {
       res.status(400).json({ error: e });
   }
 });
 
 router.get('/:id', async (req, res) => {
+  console.log(req.params.id)
   if (!req.params.id) {
     res.status(400).json({ error: 'You must Supply an ID' });
     return;
   }
   try {
-    let list = await listsData.get(req.params.id);
+    let list = await listsData.get(ObjectID(req.params.id));
     res.json(list);
   } catch (e) {
     console.log(e)
@@ -56,21 +50,24 @@ router.put('/:id', async (req, res) => {
     return;
   }
   const updatedData = req.body;
+  // console.log(updatedData)
   if (!updatedData.name) {
     res.status(400).json({ error: 'You must supply all fields' });
     return;
   }
   try {
-    await listsData.get(req.params.id);
+    await listsData.get(ObjectID(req.params.id));
   } catch (e) {
     res.status(404).json({ error: 'list not found' });
     return;
   }
 
   try {
-    const updatedPost = await listsData.update(req.params.id, updatedData);
+    updatedData._id = ObjectID(updatedData._id)
+    const updatedPost = await listsData.update(ObjectID(req.params.id), updatedData);
     res.json(updatedPost);
   } catch (e) {
+    console.log(e)
     res.status(400).json({ error: e });
   }
 });
