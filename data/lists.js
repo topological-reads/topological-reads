@@ -25,7 +25,7 @@ module.exports = {
             if(!ObjectID.isValid(items[i])){
                 throw "ERROR: Invalid items input";
             }
-            let bookOne = await bookCollection.findOne({ _id: ObjectID(items[i])});
+            let bookOne = await bookCollection.findOne({ _id: items[i]});
             if (bookOne === null){
                 throw 'ERROR: No book with the ids in your list of items';
             } 
@@ -43,12 +43,16 @@ module.exports = {
             if(!ObjectID.isValid(pair[0]) || !ObjectID.isValid(pair[1])){
                 throw "ERROR: Invalid order input";
             }
-            let bookTwo = await bookCollection.findOne({ _id: ObjectID(pair[0])});
-            if (bookTwo === null || !items.includes(pair[0])){
+            let bookTwo = await bookCollection.findOne({ _id: pair[0]});
+            if (bookTwo === null || !items.some(function (book) {
+                return book.equals(pair[0])
+            })){
                 throw 'ERROR: Invalid book in orders pair';
             } 
-            let bookThree = await bookCollection.findOne({ _id: ObjectID(pair[1])});
-            if (bookThree === null || !items.includes(pair[1])){
+            let bookThree = await bookCollection.findOne({ _id: pair[1]});
+            if (bookThree === null || !items.some(function (book) {
+                return book.equals(pair[1])
+            })){
                 throw 'ERROR: Invalid book in orders pair';
             } 
         }
@@ -63,8 +67,8 @@ module.exports = {
             if(!ObjectID.isValid(owners[i])){
                 throw "ERROR: Invalid owners input";
             }
-            let user1 = await userCollection.findOne({ _id: ObjectID(owners[i])});
-            let group1 = await groupCollection.findOne({ _id: ObjectID(owners[i])});
+            let user1 = await userCollection.findOne({ _id: owners[i]});
+            let group1 = await groupCollection.findOne({ _id: owners[i]});
             if (user1 === null && group1 === null){
                 throw 'ERROR: No book or user in database with your input';
             } 
