@@ -12,10 +12,10 @@ function isNonEmptyString (element) {
 }
 
 router.post('/', async (req, res) => {
-    
-    console.log(req.body.username, req.body.password)
+    req.body.username = req.body.username.toLowerCase();
+    console.log(req.body, req.body.password)
     if(!isNonEmptyString(req.body.username) || !isNonEmptyString(req.body.password)){
-        return res.status(404).render('../views/login', {errorMessage :'You need to sumbit usernames and passwords as strings that are not empty.'});
+        return res.status(404).render('../views/login', {errorMessage :'You need to submit usernames and passwords as strings that are not empty.'});
     }
     
     const { username, password } = req.body;
