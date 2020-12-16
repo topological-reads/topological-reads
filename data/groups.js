@@ -73,9 +73,9 @@ module.exports = {
         return await this.read(id);
     },
     async addAdmin(groupId, userId, ownerId) {
-        if (!groupId || ObjectID.isValid(groupId)) { throw `Error: the group parameter groupId when adding an admin was incorrect.` }
-        if (!userId || ObjectID.isValid(userId)) { throw `Error: the group parameter userId when adding an admin was incorrect.` }
-        if (!ownerId || ObjectID.isValid(ownerId)) { throw `Error: the group parameter ownerId when adding an admin was incorrect.` }
+        if (!groupId || !ObjectID.isValid(groupId)) { throw `Error: the group parameter groupId when adding an admin was incorrect.` }
+        if (!userId || !ObjectID.isValid(userId)) { throw `Error: the group parameter userId when adding an admin was incorrect.` }
+        if (!ownerId || !ObjectID.isValid(ownerId)) { throw `Error: the group parameter ownerId when adding an admin was incorrect.` }
         try {
             const allGroups = await groups();
             let isMember = false;
@@ -109,8 +109,8 @@ module.exports = {
 
     },
     async addPublicMember(groupId, userId) {
-        if (!groupId || ObjectID.isValid(groupId)) { throw `Error: the group parameter groupId when adding a public member was incorrect.` }
-        if (!userId || ObjectID.isValid(userId)) { throw `Error: the group parameter userId when adding a public member was incorrect.` }
+        if (!groupId || !ObjectID.isValid(groupId)) { throw `Error: the group parameter groupId when adding a public member was incorrect.` }
+        if (!userId || !ObjectID.isValid(userId)) { throw `Error: the group parameter userId when adding a public member was incorrect.` }
         try {
             const allGroups = await groups();
             const group = await this.read(groupId);
@@ -133,9 +133,9 @@ module.exports = {
     },
 
     async invitePrivateMember(groupId, userId, adminId) {
-        if (!groupId || ObjectID.isValid(groupId)) { throw `Error: the group parameter groupId when inviting a user to a private group was incorrect.` }
-        if (!userId || ObjectID.isValid(userId)) { throw `Error: the group parameter userId when inviting a user to a private group was incorrect.` }
-        if (!ownerId || ObjectID.isValid(ownerId)) { throw `Error: the group parameter ownerId when inviting a user to a private group was incorrect.` }
+        if (!groupId || !ObjectID.isValid(groupId)) { throw `Error: the group parameter groupId when inviting a user to a private group was incorrect.` }
+        if (!userId || !ObjectID.isValid(userId)) { throw `Error: the group parameter userId when inviting a user to a private group was incorrect.` }
+        if (!adminId || !ObjectID.isValid(adminId)) { throw `Error: the group parameter ownerId when inviting a user to a private group was incorrect.` }
         try {
             let isAdmin = false;
             const allGroups = await groups();
@@ -178,8 +178,8 @@ module.exports = {
     },
 
     async inviteResponse(groupId, userId, response = false) {
-        if (!groupId || ObjectID.isValid(groupId)) { throw `Error: the group parameter groupId when responding to invitations was incorrect.` }
-        if (!userId || ObjectID.isValid(userId)) { throw `Error: the group parameter userId when responding to invitations was incorrect.` }
+        if (!groupId || !ObjectID.isValid(groupId)) { throw `Error: the group parameter groupId when responding to invitations was incorrect.` }
+        if (!userId || !ObjectID.isValid(userId)) { throw `Error: the group parameter userId when responding to invitations was incorrect.` }
         try {
             const allGroups = await groups();
             const allUsers = await users();
@@ -226,9 +226,9 @@ module.exports = {
     },
 
     async deleteAdmin(groupId, adminId, ownerId) {
-        if (!groupId || ObjectID.isValid(groupId)) { throw `Error: the group parameter groupId when deleting an Admin was incorrect.` }
-        if (!adminId || ObjectID.isValid(adminId)) { throw `Error: the group parameter adminId when deleting an Admin was incorrect.` }
-        if (!ownerId || ObjectID.isValid(ownerId)) { throw `Error: the group parameter ownerId when deleting an Admin was incorrect.` }
+        if (!groupId || !ObjectID.isValid(groupId)) { throw `Error: the group parameter groupId when deleting an Admin was incorrect.` }
+        if (!adminId || !ObjectID.isValid(adminId)) { throw `Error: the group parameter adminId when deleting an Admin was incorrect.` }
+        if (!ownerId || !ObjectID.isValid(ownerId)) { throw `Error: the group parameter ownerId when deleting an Admin was incorrect.` }
         try {
             const allGroups = await groups();
             const group = await this.read(groupId);
@@ -250,9 +250,9 @@ module.exports = {
         }
     },
     async deleteMember(groupId, memberId, adminId) {
-        if (!groupId || ObjectID.isValid(groupId)) { throw `Error: the group parameter groupId when deleting a member was incorrect.` }
-        if (!adminId || ObjectID.isValid(adminId)) { throw `Error: the group parameter adminId when deleting a member was incorrect.` }
-        if (!ownerId || ObjectID.isValid(ownerId)) { throw `Error: the group parameter ownerId when deleting a member was incorrect.` }
+        if (!groupId || !ObjectID.isValid(groupId)) { throw `Error: the group parameter groupId when deleting a member was incorrect.` }
+        if (!adminId || !ObjectID.isValid(adminId)) { throw `Error: the group parameter adminId when deleting a member was incorrect.` }
+        if (!memberId || !ObjectID.isValid(memberId)) { throw `Error: the group parameter memberId when deleting a member was incorrect.` }
         try {
             let isAdmin = false;
             const allGroups = await groups();
@@ -288,7 +288,7 @@ module.exports = {
         }
     },
     async delete(id) {
-        if (!id || !ObjectID(id)) { throw `Error: the thread parameter id for delete() was not correct.` };
+        if (!id || !ObjectID.isValid(id)) { throw `Error: the thread parameter id for delete() was not correct.` };
         const allGroups = await groups();
         const group = await this.read(id);
         try {
