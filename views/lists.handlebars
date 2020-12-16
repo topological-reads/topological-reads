@@ -35,6 +35,10 @@
                             <li>{{this.name}}</li>
                         {{/each}}
                     </ul>
+                    <form method="POST" action="/lists/fork/{{this._id}}" class="forkList">
+                        <button type="submit">Fork This List</button>
+                    </form>
+              </form>
                 </ul>
             </div>
         {{/each}}
