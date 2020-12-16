@@ -62,3 +62,8 @@ function noCycles(graph) {
     }
     return true;
 }
+
+module.exports = {
+    makeGraph,
+    noCycles
+}
