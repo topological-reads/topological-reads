@@ -9,10 +9,11 @@
   <body>
     <div class="topnav">
       <a href="/home">Home</a>
-      <a class="active" href="books">Books</a>
-      <a href="users">Users</a>
-      <a href="groups">Groups</a>
-      <a href="tags">Tags</a>
+      <a class="active" href="/books">Books</a>
+      <a href="/users">Users</a>
+      <a href="/groups">Groups</a>
+      <a href="/tags">Tags</a>
+      <a href="/lists">Lists</a>
       <a href="/logout">Logout</a>
     </div>
 
@@ -42,7 +43,7 @@
               {{/each}}
               <li>Summary: {{this.summary}}</li>
               <form method="POST" action="/users/addBook/{{this._id}}" class="readBook">
-                <button id="read-book" type="submit">Add Book to Read Books</button>
+                <button type="submit">Add Book to Read Books</button>
               </form>
 
              

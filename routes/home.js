@@ -1,9 +1,11 @@
 const express = require('express');
 const data = require('../data');
 const { ObjectID } = require('mongodb');
+const users = require('../data/users');
 const router = express.Router();
 const usersData = data.users;
 const bookData = data.books;
+const listData = data.lists;
 
 router.get('/', async (req, res) => {
   if (!req.session.user){
@@ -25,10 +27,17 @@ router.get('/', async (req, res) => {
       followedUsers.push(await usersData.get(user))
     }
 
+    let listOfLists = [];
+
+    for(list of user.lists) {
+      listOfLists.push(await listData.get(ObjectID(list)))
+    }
+
     return res.render('../views/home', {
       user : user, 
       readBooks: readBooks, 
-      followedUsers: followedUsers
+      followedUsers: followedUsers,
+      myLists: listOfLists
     });
   } catch (e) {
     console.log(e)

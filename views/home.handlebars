@@ -10,10 +10,11 @@
   <body>
     <div class="topnav">
       <a class="active" href="/home">Home</a>
-      <a href="books">Books</a>
-      <a href="users">Users</a>
-      <a href="groups">Groups</a>
-      <a href="tags">Tags</a>
+      <a href="/books">Books</a>
+      <a href="/users">Users</a>
+      <a href="/groups">Groups</a>
+      <a href="/tags">Tags</a>
+      <a href="/lists">Lists</a>
       <a href="/logout">Logout</a>
     </div>
 
@@ -67,18 +68,18 @@
 
       <div>
         <h1>My Reading Lists</h1>
-        <button onclick="showHide('myLists')">Show / Hide Content</button>
-        <!-- Form that will post to list route  -->
-        <form method="POST" action="/lists" class="new-search">
-          <label for="search-term">Create List</label>
-          <input id="search-term" type="text" name="listName"/>
+                <!-- Form that will post to list route  -->
+        <form method="POST" action="/lists" class="makeList">
+          <label for="make-list">Create List</label>
+          <input id="make-list" type="text" name="listName"/>
           <button type="submit">Create List</button>
         </form>
+        <p class="error">{{errorMessage}}</p>
         {{#if myLists}}
           <button onclick="showHide('myLists')">Show / Hide Content</button>
           <ul id="myLists">
             {{#each myLists}}
-
+              <li><a href="/lists/{{this._id}}">{{this.name}}</a></li>
             {{/each}}
           </ul>
         {{else}}
@@ -106,7 +107,7 @@
           <button onclick="showHide('followedUsers')">Show / Hide Content</button>
           <ul id="followedUsers">
             {{#each followedUsers}}
-              <li><a href="users/{{this._id}}">{{this.name}}</a></li>
+              <li><a href="/users/{{this._id}}">{{this.name}}</a></li>
             {{/each}}
           </ul>
         {{else}}

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="/public/css/style.css">
-  <title>Tags</title>
+  <title>Lists</title>
 </head>
   <body>
     <div class="topnav">
@@ -12,37 +12,32 @@
       <a href="books">Books</a>
       <a href="users">Users</a>
       <a href="groups">Groups</a>
-      <a class="active" href="tags">Tags</a>
-      <a href="/lists">Lists</a>
+      <a href="tags">Tags</a>
+      <a class="active" href="/lists">Lists</a>
       <a href="/logout">Logout</a>
     </div>
 
-    <main>
-      <form method="POST" action="/tags/search" class="new-search">
+    {{!-- <main>
+      <form method="POST" action="/lists/search" class="new-search">
         <label for="search-term">Search Term</label>
         <input id="search-term" type="text" name="searchTerm"/>
         <button id="doSearch" type="submit">Search</button>
-      </form>
-      <p class="error">{{errorMessage}}</p>
-    {{#if groups}}
-        <div class="groups">
-        <h1>Groups</h1>
-        {{#each groups}}
-            <li><a href="groups/{{this.id}}">{{this.name}}</a></li>
-        {{/each}}
-        </div>
-      {{else}}
-        <div>
-          <h2>No groups found.</h2>
-        </div>
-      {{/if}}
-    {{#if lists}}
-        <div class="lists">
+      </form> --}}
+    {{#if body}}
         <h1>Lists</h1>
-        {{#each lists}}
-            <li><a href="lists/{{this.id}}">{{this.name}}</a></li>
+        {{#each body}}
+            <div class="lists">
+                <ul>
+                    <li>Owners:</li>
+                    <ul>
+                        {{#each this.owners}}
+                            <li>{{this.name}}</li>
+                        {{/each}}
+                    </ul>
+                    <li><a href="lists/{{this._id}}">{{this.name}}</a></li>
+                </ul>
+            </div>
         {{/each}}
-        </div>
       {{else}}
         <div>
           <h2>No lists found.</h2>

@@ -3,6 +3,7 @@ const router = express.Router();
 const data = require('../data');
 const usersData = data.users;
 const bookData = data.books;
+const listData = data.lists;
 const { ObjectID } = require('mongodb');
 router.get('/', async (req, res) => {
   if (!req.session.user){
@@ -34,8 +35,14 @@ router.get('/:userid', async (req, res) => {
       readBooks.push(await bookData.get(book))
     }
 
+    let listOfLists = [];
+
+    for(list of user.lists) {
+      listOfLists.push(await listData.get(ObjectID(list)))
+    }
+
     //missing groups
-    res.render("../views/user", {body: user, readBooks: readBooks})
+    res.render("../views/user", {body: user, readBooks: readBooks, readingLists: listOfLists})
   } catch (e) {
     console.log(e);
     res.status(404).render("../views/user", {})
