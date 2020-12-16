@@ -36,6 +36,10 @@ async function main() {
   const user1_id = user1._id
   console.log(user1);
 
+  const user5 = await users.create(`Chris`, `example@gmail.com`, [book1_id], 
+    [], [], [], [], `password`, []);
+    console.log(`User 2: Chris -> `, user5);
+
   console.log("Making user 2")
   const user2 = await users.create("test","test@test.com",[book1_id], 
     [], [], [], [], "test", [])
@@ -89,7 +93,7 @@ async function main() {
   }
   // console.log(`Create a group!:`)
   const group_create = await groups.create(`Horror Movie Fanatics`, user1_id, false, [`Spoopy`]);
-  const test_create = await groups.create(`Test Run`, user1_id, false, [`Scary, Spooky`]);
+  const test_create = await groups.create(`Test Run`, user1_id, true, [`Scary, Spooky`]);
   // console.log(`Horror Movie Fanatics:`, group_create);
   // console.log(`Test Group:`, test_create);
 
@@ -114,13 +118,34 @@ async function main() {
   // console.log(`Create a thread for test forum:`, inserted_thread);
 
   const deleted_thread = await threads.delete(inserted_thread._id);
-  // console.log(`Deleting Test Thread:`, deleted_thread);
-  const deleted_group = await groups.delete(update_forum.group);
+  console.log(`Deleting Test Thread:`, deleted_thread);
+  // const deleted_group = await groups.delete(update_forum.group);
   // console.log(`Test Forum deleted: `, deleted_group);
 
+  const allPublic = await groups.getAllPublic();
+  console.log(`Get All Public Groups: `, allPublic);
+
+  const readPublicData = await groups.addPublicMember(group_create._id, new ObjectID());
+  console.log(`Add a public member: `, readPublicData);
+
+  const inviteMember = await groups.invitePrivateMember(update_test._id, user5._id, user1._id);
+  console.log(`Invite Chris to Private Test Group: `, inviteMember);
+
+  const inviteResponse = await groups.inviteResponse(update_test._id, user5._id, true);
+  console.log(`Chris accepts the invite: `, inviteResponse);
+
+  const addAdmin = await groups.addAdmin(update_test._id, user5._id, user1._id);
+  console.log(`Chris becomes an Admin: `, addAdmin);
+
+  const deleteAdmin = await groups.deleteAdmin(update_test._id, user5._id, user1._id);
+  console.log(`Chris shouldn't be an admin!:`, deleteAdmin);
+
+  const deleteMember = await groups.deleteMember(update_test._id, user5._id, user1._id);
+  console.log(`You know... Chris shouldn't even be a member!... :( :`, deleteMember);
 
   console.log('Done seeding database');
-  //await db.serverConfig.close();
+
+  await db.serverConfig.close();
 }
 
 main();

@@ -6,10 +6,10 @@ const forumModule = require('./forums');
 
 module.exports = {
     async create(forum, op, initialComment) {
-        if (!forum || !ObjectID(forum)) {
+        if (!forum || !ObjectID.isValid(forum)) {
             throw `Error: Ivalid forum while creating a forum thread.`;
         }
-        if (!op || !ObjectID(op)) {
+        if (!op || !ObjectID.isValid(op)) {
             throw `Error: Invalid original poster while creating a forum thread`;
         }
         if (!initialComment.trim() || typeof initialComment !== `string`) {
@@ -34,7 +34,7 @@ module.exports = {
         return newForumThread;
     },
     async read(id) {
-        if (!id || !ObjectID(id)) { throw `Error: the thread parameter id for read() was not correct.` };
+        if (!id || !ObjectID.isValid(id)) { throw `Error: the thread parameter id for read() was not correct.` };
         const gettingForums = await threads();
         try {
             let readThread = await gettingForums.findOne({ _id: id });
@@ -44,7 +44,7 @@ module.exports = {
         }
     },
     async update(id, updatedBody) {
-        if (!id || !ObjectID(id)) { throw `Error: the thread parameter id for read() was not correct.` };
+        if (!id || !ObjectID.isValid(id)) { throw `Error: the thread parameter id for read() was not correct.` };
         const thisThread = await this.read(id);
         const allThreads = await threads();
         if (!updatedBody.forum) {
@@ -65,7 +65,7 @@ module.exports = {
         return await this.read(id);
     },
     async delete(id) {
-        if (!id || !ObjectID(id)) { throw `Error: the thread parameter id for read() was not correct.` };
+        if (!id || !ObjectID.isValid(id)) { throw `Error: the thread parameter id for read() was not correct.` };
         const threadCollection = await threads();
         const forumsCollection = await forums();
         const threadForum = await this.read(id);
