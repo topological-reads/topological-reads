@@ -9,7 +9,7 @@ const bcrypt = require('bcryptjs');
 const saltRounds = 10;
 
 module.exports = {
-    async create(name, email, read, groups, lists, listsFollowing, 
+    async create(name, email, read, reading, groups, lists, listsFollowing, 
       usersFollowing, password, invitations){ 
         if(!name || typeof(name) !== 'string' || name.trim() === ""){
             throw "ERROR: Invalid name input";
@@ -29,8 +29,12 @@ module.exports = {
         }
         
         if(!read || !Array.isArray(read)){
-            throw "ERROR: Invalid book input";
+            throw "ERROR: Invalid read input";
         }
+
+        if(!reading || !Array.isArray(reading)){
+          throw "ERROR: Invalid reading input";
+      }
 
         const userCollection = await users();
         const bookCollection = await books();
@@ -44,6 +48,16 @@ module.exports = {
           const book1 = await bookCollection.findOne({ _id: elem});
           if (book1 === null) {
             throw `ERROR: read element ${elem} has a book ID that is not in the db`;
+          }
+        }
+
+        for(elem of reading) {
+          if(!ObjectID.isValid(elem)) {
+            throw `ERROR: ObjectID ${elem.toString()} in reading list is invalid`;
+          }
+          const book1 = await bookCollection.findOne({ _id: elem});
+          if (book1 === null) {
+            throw `ERROR: reading element ${elem} has a book ID that is not in the db`;
           }
         }
 
@@ -127,6 +141,7 @@ module.exports = {
           name: name.trim(),
           email: email.trim(),
           read: read,
+          reading: reading,
           groups: groups,
           lists: lists,
           listsFollowing: listsFollowing,
@@ -191,12 +206,59 @@ module.exports = {
         if(!ObjectID.isValid(book_id)) throw 'ERROR: Invalid book_id id';
 
         const userCollection = await users();
+        const user = await this.get(ObjectID(id));
+
+        if(!user.read.some(function (book) {
+          return book.equals(ObjectID(book_id))
+        })) {
+          const updatedUser = await userCollection.updateOne(
+            {_id: ObjectID(id)},
+            {$push: {read: ObjectID(book_id)}}
+          );
+          if (!updatedUser.matchedCount && !updatedUser.modifiedCount){
+            throw 'addBook failed';
+          }
+        }
+        return this.get(ObjectID(id));
+      },
+
+      //handles id and book_id as strings
+      async addReading(id, book_id) {
+        if (!id) throw 'ERROR: You must provide an id to search for';
+        if (!book_id) throw 'ERROR: You must provide an book_id to add';
+        if(!ObjectID.isValid(id)) throw 'ERROR: Invalid id';
+        if(!ObjectID.isValid(book_id)) throw 'ERROR: Invalid book_id id';
+
+        const userCollection = await users();
+        const user = await this.get(ObjectID(id));
+        if(!user.reading.some(function (book) {
+          return book.equals(ObjectID(book_id))
+        })) {
+          const updatedUser = await userCollection.updateOne(
+            {_id: ObjectID(id)},
+            {$push: {reading: ObjectID(book_id)}}
+          );
+          if (!updatedUser.matchedCount && !updatedUser.modifiedCount){
+            throw 'addreading failed';
+          }
+        }
+        return this.get(ObjectID(id));
+      },
+
+      //handles id and book_id as strings
+      async removeReading(id, book_id) {
+        if (!id) throw 'ERROR: You must provide an id to search for';
+        if (!book_id) throw 'ERROR: You must provide an book_id to add';
+        if(!ObjectID.isValid(id)) throw 'ERROR: Invalid id';
+        if(!ObjectID.isValid(book_id)) throw 'ERROR: Invalid book_id id';
+
+        const userCollection = await users();
         const updatedUser = await userCollection.updateOne(
           {_id: ObjectID(id)},
-          {$push: {read: ObjectID(book_id)}}
+          {$pull: {reading: ObjectID(book_id)}}
         );
         if (!updatedUser.matchedCount && !updatedUser.modifiedCount){
-          throw 'addBook failed';
+          throw 'removeReading failed';
         }
         return this.get(ObjectID(id));
       },
