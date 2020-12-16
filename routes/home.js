@@ -2,6 +2,7 @@ const express = require('express');
 const data = require('../data');
 const { ObjectID } = require('mongodb');
 const users = require('../data/users');
+const { read } = require('../data/threads');
 const router = express.Router();
 const usersData = data.users;
 const bookData = data.books;
@@ -23,6 +24,12 @@ router.get('/', async (req, res) => {
       readBooks.push(await bookData.get(book))
     }
 
+    let readingBooks = [];
+
+    for(readingbook of user.reading) {
+      readingBooks.push(await bookData.get(readingbook))
+    }
+
     let followedUsers = [];
 
     for(let elem of user.usersFollowing) {
@@ -39,7 +46,8 @@ router.get('/', async (req, res) => {
 
     return res.render('../views/home', {
       user : user, 
-      readBooks: readBooks, 
+      readBooks: readBooks,
+      readingBooks: readingBooks,
       followedUsers: followedUsers,
       myLists: listOfLists,
       memberGroups : memberGroups

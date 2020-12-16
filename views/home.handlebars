@@ -40,6 +40,23 @@
       </div>
 
       <div>
+        <h1>Currently Reading</h1>
+        {{#if readingBooks}}
+          <button onclick="showHide('readingBooks')">Show / Hide Content</button>
+          <ol id="readingBooks">
+            {{#each readingBooks}}
+              <li>{{this.title}} by {{this.author}}</li>
+              <form method="POST" action="/users/finishBook/{{this._id}}" class="finishBook">
+                <button type="submit">Add Book to Read Books</button>
+              </form>
+            {{/each}}
+          </ol>
+        {{else}}
+          <p>No books are currently being read.<p>
+        {{/if}}
+      </div>
+
+      <div>
         <h1>Group Membership</h1>
           <button onclick="showHide('groupMembership')">Show / Hide Content</button>
           <div id="groupMembership">

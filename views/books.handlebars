@@ -42,6 +42,9 @@
                 </ul>
               {{/each}}
               <li>Summary: {{this.summary}}</li>
+              <form method="POST" action="/users/currentBook/{{this._id}}" class="currentBook">
+                <button type="submit">Add Book to Currently Reading Books</button>
+              </form>
               <form method="POST" action="/users/addBook/{{this._id}}" class="readBook">
                 <button type="submit">Add Book to Read Books</button>
               </form>

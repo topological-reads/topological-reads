@@ -68,6 +68,45 @@ router.post('/addBook/:id', async (req, res) => {
 
 });
 
+router.post('/finishBook/:id', async (req, res) => {
+  if (!req.params.id) {
+    return res.status(400).json({ error: 'You must Supply an ID' });
+  }
+
+  if (!req.session.user){
+    return res.status(404).render('../views/error', {errorMessage :'You are not authenticate to view this information.'});
+  }
+  try {
+    //addBook function handles making strings into ObjectIDs
+    const addUser = await usersData.addBook(req.session.user._id, req.params.id);
+    const newuser = await usersData.removeReading(req.session.user._id, req.params.id);
+    return res.redirect("/home");
+  } catch (e) {
+    console.log(e);
+    res.status(404).json({ error: e });
+  }
+
+});
+
+router.post('/currentBook/:id', async (req, res) => {
+  if (!req.params.id) {
+    return res.status(400).json({ error: 'You must Supply an ID' });
+  }
+
+  if (!req.session.user){
+    return res.status(404).render('../views/error', {errorMessage :'You are not authenticate to view this information.'});
+  }
+  try {
+    //addBook function handles making strings into ObjectIDs
+    const addUser = await usersData.addReading(req.session.user._id, req.params.id);
+    return res.status(200)
+  } catch (e) {
+    console.log(e);
+    res.status(404).json({ error: e });
+  }
+
+});
+
 router.post('/followUser/:id', async (req, res) => {
   if (!req.params.id) {
     return res.status(400).json({ error: 'You must Supply an ID' });
