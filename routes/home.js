@@ -23,11 +23,13 @@ router.get('/', async (req, res) => {
 
     let followedUsers = [];
 
-    for(user of user.usersFollowing) {
-      followedUsers.push(await usersData.get(user))
+    for(elem of user.usersFollowing) {
+      followedUsers.push(await usersData.get(elem))
     }
 
     let listOfLists = [];
+
+    console.log(user);
 
     for(list of user.lists) {
       listOfLists.push(await listData.get(ObjectID(list)))
