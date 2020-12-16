@@ -29,8 +29,6 @@ router.get('/', async (req, res) => {
 
     let listOfLists = [];
 
-    console.log(user);
-
     for(list of user.lists) {
       listOfLists.push(await listData.get(ObjectID(list)))
     }
