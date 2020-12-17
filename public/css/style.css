@@ -147,3 +147,7 @@ dt {
 	background-color: #4CAF50;
 	color: white;
   }
+
+  .topnav-right {
+	  float: right;
+  }
