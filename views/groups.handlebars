@@ -19,14 +19,15 @@
       </div>
     </div>
 
-    <div>
-        <ul>
-            {{#each body}}
-                <li><a href="/groups/{{this._id}}">{{this.name}}</a></li>
-                <form method="POST">
-                    <button type="submit" formaction="/groups/addMember/{{this._id}}">Click to join this group!</button>
-                </form>
-            {{else}}
-        </ul>
-    </div>
-    {{/each}}
+    <main>
+      {{#each body}}
+        <div class="groups">
+          <ul class="no-bullets">
+            <li><a href="/groups/{{this._id}}">{{this.name}}</a></li>
+            <form method="POST">
+              <button type="submit" formaction="/groups/addMember/{{this._id}}">Click to join this group!</button>
+            </form>
+          </ul>
+        </div>
+      {{/each}}
+    </main>

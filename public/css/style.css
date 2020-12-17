@@ -106,7 +106,7 @@ label {
 	color: #ff0000;
 }
 
-.book, .user, .lists{
+.book, .user, .lists, .comment, .groups{
 	background:rgb(233, 232, 232);
 }
 
@@ -150,4 +150,10 @@ dt {
 
   .topnav-right {
 	  float: right;
+  }
+
+  .no-bullets {
+	list-style-type: none;
+	padding: 0px;
+	margin-left: 15px;
   }
