@@ -19,38 +19,38 @@
         <a href="/logout">Logout</a>
       </div>
     </div>
+
+    <main>
+      {{!-- content goes here. See books.handlebars or user.handlebars for reference --}}
+      {{#if body}}
+        <h2>List Name: {{body.name}}</h2>
+        <h5>Read these books in sequential order.</h5>
+          {{#if book}}
+            {{#each book}}
+              <div class="book">
+                <ul>
+                  <li>Book Order Number: {{inc @index}}</li>
+                  <li>Title: {{this.title}}</li>
+                  <li>Author: {{this.author}}</li>
+                  <li>Summary: {{this.summary}}</li>
+                  <form method="POST" action="/users/currentBook/{{this._id}}" class="currentBook">
+                    <button type="submit">Add Book to Currently Reading Books</button>
+                  </form>
+                  <form method="POST" action="/users/addBook/{{this._id}}" class="readBook">
+                    <button type="submit">Add Book to Read Books</button>
+                  </form>
+                  <button class="removeBookFromListButton" data-book="{{this._id}}" data-list="{{../body._id}}">Remove Book From List</button>
+                </ul>
+              </div>
+            {{/each}}
+          {{/if}}
+      {{else}}
+        <div>
+          <h2>No Lists found.</h2>
+        </div>
+      {{/if}}
+    </main>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+    <script src="../public/books.js"></script>
   </body>
-
-  <main>
-    {{!-- content goes here. See books.handlebars or user.handlebars for reference --}}
-    {{#if body}}
-      <h2>List Name: {{body.name}}</h2>
-      <h5>Read these books in sequential order.</h5>
-        {{#if book}}
-          {{#each book}}
-            <div class="book">
-              <ul>
-                <li>Book Order Number: {{inc @index}}</li>
-                <li>Title: {{this.title}}</li>
-                <li>Author: {{this.author}}</li>
-                <li>Summary: {{this.summary}}</li>
-                <form method="POST" action="/users/currentBook/{{this._id}}" class="currentBook">
-                  <button type="submit">Add Book to Currently Reading Books</button>
-                </form>
-                <form method="POST" action="/users/addBook/{{this._id}}" class="readBook">
-                  <button type="submit">Add Book to Read Books</button>
-                </form>
-              </ul>
-            </div>
-          {{/each}}
-        {{/if}}
-    {{else}}
-      <div>
-        <h2>No Lists found.</h2>
-      </div>
-    {{/if}}
-  </main>
-
-
-
 </html>
