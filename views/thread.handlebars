@@ -23,9 +23,9 @@
     <h2>{{body.initialComment}}</h2>
     <p>Posted by: {{op.name}}</p>
     <form method="POST" action="/threads/addComment/{{body._id}}">
-      <label for="threadComment">Add a new Thread!</label>
+      <label for="threadComment">Add a new Comment!</label>
       <input id="threadComment" type="text" name="threadComment">
-      <button type="submit">Click to add a thread!</button>
+      <button type="submit">Click to add a comment!</button>
     </form>
     {{#if body.comments.length}}
       <ul>
