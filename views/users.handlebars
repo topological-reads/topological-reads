@@ -16,20 +16,19 @@
       <a href="/lists">Lists</a>
       <div class="topnav-right">
         <a href="/logout">Logout</a>
-      </div>
     </div>
 
-    
-
+    </div>
       {{#if body}}
         {{#each body}}
           <div class="user">
             <ul>
-              <li>Username: {{this.name}}</li>
-              <li><a href="/users/{{this._id}}">Profile</a></li>
-              <form method="POST" action="/users/followUser/{{this._id}}" class="followUser">
-                <button id="follow-user" type="submit">Follow this user</button>
-              </form>
+              {{!-- <li>Username: {{this.name}}</li> --}}
+              <div><a href="/users/{{this._id}}">{{this.name}}</a>
+                <form method="POST" action="/users/followUser/{{this._id}}" class="followUser">
+                  <button id="follow-user" type="submit">Follow this user</button>
+                </form>
+              </div>
             </ul>
           </div>
         {{/each}}
