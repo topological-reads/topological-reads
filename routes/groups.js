@@ -6,6 +6,7 @@ const lists = require(`../data/lists`);
 const users = require(`../data/users`);
 const forums = require(`../data/forums`);
 const threads = require(`../data/threads`);
+const tags = require(`../data/tags`);
 
 router.get('/', async (req, res) => {
   if (!req.session.user){
@@ -75,10 +76,51 @@ router.post('/deleteAdmin/:groupId', async (req, res) => {
     const info = await getInfo(req, deleteAdmin, groupForum);
     return res.status(200).render('../views/group', { body: deleteAdmin, list: info.listArr, owner: info.isOwner, admin: info.isAdmin, threads: info.threadArr, message: `Admin deleted correctly!` });
   } catch (e) {
-    return res.status(404).rendor('../views/error', { errorMessage: `Issue deleting admin from the admin list. ${e}`, other: true});
+    return res.status(404).render('../views/error', { errorMessage: `Issue deleting admin from the admin list. ${e}`, other: true});
   }
 })
+router.post('/tag', async (req, res) => {
+  console.log("Hello");
+  if (!req.session.user){
+    return res.status(404).render('../views/error', {errorMessage :'You are not authenticated to view this information.'});
+  }
+  
+  let t = await tags.getAll();
+    console.log(t);
+    let group_all = await groups.getAll();
+    console.log(group_all);
+    console.log(req.params.groupId);
+    if(!req.body.tagName){
+      return res.status(404).render('../views/error', {errorMessage :'No tag name given.'}); 
+    }
+    if(typeof(req.body.tagName) !== 'string'){
+      return res.status(404).render('../views/error', {errorMessage :'Invalid tag name'}); 
+    }
+    for(group in group_all){
+      console.log(group.name);
+      if(req.params.groupId === group.name){
+        let group1 = await groups.get(group._id);
+      }
+    }
+    for(tag of t){
+      if(tag.name === req.body.tagName && !group1.tag.includes(req.body.tagName)){
+        let lst = group1.tags.push(req.body.tagName);
+        let update = await groups.update(id, {tags: lst})
+        return res.status(200).render('../views/group', { message: `Tag ${req.body.tagName} added correctly!`});
+      }
+    }
+    //let tag = tags.create(req.body.tagName);
+    //if(!group1.tags.includes(req.body.tagName)){
+    //let lst = group1.tags.push(req.body.tagName)
+    //let update = await groups.update(id, {tags: lst})
+    //return res.status(200).render('../views/group', { body: addTag, tag:tag, message: `Tag added correctly!`});  
+    //}
+     //}
+  //catch (e) {
+  //  return res.status(404).render('../views/error', { errorMessage: `Unable to add tag to list. ${e}`, other: true});
+  //}
 
+});
 router.post('/addMember/:groupId', async (req, res) => {
   if (!req.session.user){
     return res.status(404).render('../views/error', {errorMessage :'You are not authenticated to view this information.'});
