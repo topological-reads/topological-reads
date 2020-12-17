@@ -12,22 +12,18 @@ router.get('/', async (req, res) => {
   try {
     const tags = await tagsData.getAll();
     const groups = await groupsData.getAll();
+    console.log(groups);
     const lists = await listsData.getAll();
+    console.log(lists);
     let g = []
     let l = []
-    for(tag of tags){
-      for(group of groups){
-        let name = group.name
-        if(group.tags.includes(tag._id)){
-          g.push({id: group._id, name: name})
-        }
-      }
-      for(list of lists){
-        let name = list.name
-        if(list.tags.includes(tag._id)){
-          l.push({id: list._id, name: name})
-        }
-      }
+    for(group of groups){
+      let name = group.name
+      g.push({id: group._id, name: name})
+    }
+    for(list of lists){
+      let name = list.name
+      l.push({id: list._id, name: name})
     }
     if(g === [] && l === []){
       res.render("../views/tags", {body : tags})
@@ -81,14 +77,16 @@ router.post('/search', async (req, res) => {;
     let searchTerm = req.body.searchTerm;
     const tags = await tagsData.getAll();
     const groups = await groupsData.getAll();
+    console.log(groups);
     const lists = await listsData.getAll();
+    console.log(lists);
     let g = []
     let l = []
     for(tag of tags){
       if(tag.name === searchTerm){
         for(group of groups){
           let name = group.name
-          if(group.tags.includes(tag._id)){
+          if(group.tags.includes(tag.name)){
             g.push({id: group._id, name: name})
           }
         }

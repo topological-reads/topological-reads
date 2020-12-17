@@ -24,29 +24,56 @@
         <button id="doSearch" type="submit">Search</button>
       </form>
       <p class="error">{{errorMessage}}</p>
-    {{#if groups}}
+    {{#if searchTerm}}
+        {{#if groups}}
         <div class="groups">
         <h1>Groups</h1>
         {{#each groups}}
-            <li><a href="groups/{{this.id}}">{{this.name}}</a></li>
+            <li><a href="/groups/{{this.id}}">{{this.name}}</a></li>
         {{/each}}
         </div>
       {{else}}
         <div>
-          <h2>No groups found.</h2>
+          <h5>No groups found.</h5>
         </div>
       {{/if}}
     {{#if lists}}
         <div class="lists">
         <h1>Lists</h1>
         {{#each lists}}
-            <li><a href="lists/{{this.id}}">{{this.name}}</a></li>
+            <li><a href="/lists/{{this.id}}">{{this.name}}</a></li>
         {{/each}}
         </div>
       {{else}}
         <div>
-          <h2>No lists found.</h2>
+          <h5>No lists found.</h5>
         </div>
+      {{/if}}
+    {{else}}
+    {{#if groups}}
+        <div class="groups">
+        <h1>Groups</h1>
+        {{#each groups}}
+            <li><a href="/groups/{{this.id}}">{{this.name}}</a></li>
+        {{/each}}
+        </div>
+      {{else}}
+        <div>
+          <h5>No groups found.</h5>
+        </div>
+      {{/if}}
+    {{#if lists}}
+        <div class="lists">
+        <h1>Lists</h1>
+        {{#each lists}}
+            <li><a href="/lists/{{this.id}}">{{this.name}}</a></li>
+        {{/each}}
+        </div>
+      {{else}}
+        <div>
+          <h5>No lists found.</h5>
+        </div>
+      {{/if}}
       {{/if}}
     
     </main>
