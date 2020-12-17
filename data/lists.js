@@ -145,6 +145,18 @@ module.exports = {
         if(!ObjectID.isValid(list_id)) throw 'ERROR: Invalid list_id id';
 
         const userCollection = await users();
+
+        const user = await userCollection.findOne({ _id: ObjectID(id)});
+        // console.log(list_id)
+        // console.log(user.listsFollowing)
+        // console.log(user.listsFollowing.indexOf(ObjectID(list_id))>-1)
+        // If the list_id already exists in the user.listsFollowing Array render error page
+        user.listsFollowing.forEach(listBeingFollowed => {
+            if(listBeingFollowed.toString() === list_id){
+                throw "List is already being followed."
+            }
+        });
+    
         const updatedUser = await userCollection.updateOne(
           {_id: ObjectID(id)},
           {$push: {listsFollowing: ObjectID(list_id)}}

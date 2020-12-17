@@ -45,7 +45,7 @@ router.post('/followList/:id', async (req, res) => {
     return res.status(200).redirect("/lists");
   } catch (e) {
     console.log(e);
-    res.status(404).json({ error: e });
+      res.status(400).render('../views/error', {other: true, errorMessage: e});
   }
 });
 
