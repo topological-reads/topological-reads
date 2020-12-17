@@ -1,9 +1,33 @@
 $(document).ready(function() {
     $(".addBookToListButton").on("click", addBookToList)
-    
+    $(".removeBookFromListButton").on("click", removeBookFromList)
 });
+
+function removeBookFromList(e){
+    let listId = $(e.target).data("list")
+    let bookId = $(e.target).data("book")
+    // console.log(listId)
+    // console.log(bookId)
+    
+    $.ajax({
+        url: `/lists/ajax/${listId}`,
+        success: data => {
+            let bookIndex = data.items.indexOf(bookId)
+            if(bookIndex >= 0) {
+                // console.log(data.items)
+                data.items.splice(bookIndex, 1)
+                // console.log(data.items)
+                updateList(data) 
+            }
+        },
+        error: data => {
+            console.log(data)
+        }
+    })
+};
   
 function addBookToList(e){
+    
     //console.log($(e.target).data("book"))
     let bookId = $(e.target).data("book")
     // e is the click event, the target is the clicked button
@@ -12,7 +36,8 @@ function addBookToList(e){
     // val is the value of the option (listid)
     //console.log($(e.target).siblings("select").find(":selected").val())
     let listId = $(e.target).siblings("select").find(":selected").val()
-
+    console.log(bookId)
+    console.log(listId)
     $.ajax({
         url: `/lists/ajax/${listId}`,
         success: data => {
