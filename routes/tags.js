@@ -6,6 +6,9 @@ const tagsData = data.tags;
 const groupsData = data.groups;
 const listsData = data.lists
 router.get('/', async (req, res) => {
+  if (!req.session.user){
+    return res.status(404).render('../views/error', {errorMessage :'You are not authenticated to view this information.'});
+  }
   try {
     const tags = await tagsData.getAll();
     const groups = await groupsData.getAll();
@@ -45,6 +48,9 @@ router.get('/', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
+  if (!req.session.user){
+    return res.status(404).render('../views/error', {errorMessage :'You are not authenticated to view this information.'});
+  }
   let tag = req.body;
   if(!tag){
     return res.status(404).render('../views/error', {errorMessage :'You must provide a tag.'});
@@ -66,20 +72,20 @@ router.post('/', async (req, res) => {
 
 router.post('/search', async (req, res) => {;
   if (!req.session.user){
-    return res.status(404).render('../views/error', {errorMessage :'You are not authenticate to view this information.'});
+    return res.status(404).render('../views/error', {errorMessage :'You are not authenticated to view this information.'});
   }
-  try {
+  if(!req.body.searchTerm) {
+    return res.status(404).render('../views/error', {errorMessage :'Must enter a term term.'});
+  } 
+  else {
     let searchTerm = req.body.searchTerm;
-    if(!searchTerm) {
-      res.render("../views/tags", {body: book, errorMessage: "You must enter a search term!"})
-    } 
-    else {
-      const tags = await tagsData.search();
-      const groups = await groupsData.getAll();
-      const lists = await listsData.getAll();
-      let g = []
-      let l = []
-      for(tag of tags){
+    const tags = await tagsData.getAll();
+    const groups = await groupsData.getAll();
+    const lists = await listsData.getAll();
+    let g = []
+    let l = []
+    for(tag of tags){
+      if(tag.name === searchTerm){
         for(group of groups){
           let name = group.name
           if(group.tags.includes(tag._id)){
@@ -87,30 +93,30 @@ router.post('/search', async (req, res) => {;
           }
         }
         for(list of lists){
-          let name = list.name
+          let name = list.name;
           if(list.tags.includes(tag._id)){
             l.push({id: list._id, name: name})
           }
         }
-      }
-      if(g === [] && l === []){
-        res.render("../views/tags", {body : tags})
-      }
-      if(g === []){
-        res.render("../views/tags", {body : tags, lists: l})
-      }
-      if(l === []){
-        res.render("../views/tags", {body : tags, lists: l})
+        if(g === [] && l === []){
+          return res.render("../views/tags", {body : tags})
+        }
+        if(g === []){
+          return res.render("../views/tags", {body : tags, lists: l})
+        }
+        if(l === []){
+          return res.render("../views/tags", {body : tags, lists: l})
+        }
+        else{
+          return res.render("../views/tags", {body : tags, groups: g, lists: l})
+        }
       }
       else{
-        res.render("../views/tags", {body : tags, groups: g, lists: l})
+        return res.status(404).render('../views/error', {errorMessage : `No tag of ${searchTerm} found`});
       }
     }
-
-  } catch (e){
-    console.log(e);
-    res.status(404).json({ error: e });
-  }
+      
+    }
 });
 
 router.get('/:id', async (req, res) => {
