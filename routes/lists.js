@@ -27,6 +27,23 @@ router.get('/', async (req, res) => {
   }
 });
 
+router.post('/followList/:id', async (req, res) => {
+  if (!req.params.id) {
+    return res.status(400).json({ error: 'You must Supply an ID' });
+  }
+  if (!req.session.user){
+    return res.status(404).render('../views/error', {errorMessage :'You are not authenticate to view this information.'});
+  }
+  try {
+    //followUser function handles making strings into ObjectIDs
+    await listsData.followList(req.session.user._id, req.params.id);
+    return res.status(200)
+  } catch (e) {
+    console.log(e);
+    res.status(404).json({ error: e });
+  }
+});
+
 router.post('/', async (req, res) => {
   if (!req.session.user){
     return res.status(404).render('../views/error', {errorMessage :'You are not authenticate to view this information.'});

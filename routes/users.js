@@ -117,7 +117,7 @@ router.post('/followUser/:id', async (req, res) => {
   }
   try {
     //followUser function handles making strings into ObjectIDs
-    const followUser = await usersData.followUser(req.session.user._id, req.params.id);
+    await usersData.followUser(req.session.user._id, req.params.id);
     return res.status(200)
   } catch (e) {
     console.log(e);
