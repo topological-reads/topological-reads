@@ -64,7 +64,7 @@
             <ul>
               {{#if memberGroups}}
                 {{#each memberGroups}}
-                  <li>{{this.name}}</li>
+                  <li><a href="/groups/{{this._id}}">{{this.name}}</a></li>
                 {{/each}}
               {{else}}
                 <p>You are not the member of any groups.</p>
