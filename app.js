@@ -29,7 +29,7 @@ app.use((req, res, next) => {
   if(req.session.user){
     req.x = 'Authenticated'
   } else {
-    req.x = 'Unathenticated'
+    req.x = 'Unauthenticated'
   }
   console.log(new Date().toUTCString(), req.method, req.originalUrl, req.x)
   next()
