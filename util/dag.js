@@ -42,7 +42,10 @@ function makeGraph(items) {
     const graph = {};
 
     for (const [u, v] of items) {
-        graph[u] = v;
+        if (!(u in graph)) {
+            graph[u] = new Set();
+        }
+        graph[u].add(v);
     }
 
     return graph;
@@ -63,7 +66,20 @@ function noCycles(graph) {
     return true;
 }
 
+
+function predecessors(graph, v) {
+    const p = new Set();
+    for (const u of graph) {
+        if (graph[u].has(v)) {
+            p.add(u);
+        }
+    }
+    return p;
+}
+
+
 module.exports = {
     makeGraph,
-    noCycles
+    noCycles,
+    predecessors
 }
