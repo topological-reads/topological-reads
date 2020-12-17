@@ -315,7 +315,7 @@ module.exports = {
             }
 
         } catch (e) {
-            throw `Error while deleting an admin: ${e}`;
+            throw `Error while deleting a member: ${e}`;
         }
     },
     async delete(id) {

@@ -74,7 +74,13 @@
             <ul>
               {{#if invitations}}
                 {{#each invitations}}
-
+                  <li>
+                    {{this.name}}
+                    <form method="POST">
+                      <button type="submit" formaction="/groups/inviteResponse/{{this._id}}/true">Accept</button>
+                      <button type="submit" formaction="/groups/inviteResponse/{{this._id}}/false">Decline</button>
+                    </form>
+                  </li>
                 {{/each}}
               {{else}}
                 <p>No invitations found.</p>

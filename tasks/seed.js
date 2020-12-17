@@ -119,10 +119,6 @@ async function main() {
   const inserted_thread = await threads.create(update_forum._id, user1_id, `The Shining was so scary to me!`);
   // console.log(`Create a thread for test forum:`, inserted_thread);
 
-  const deleted_thread = await threads.delete(inserted_thread._id);
-  console.log(`Deleting Test Thread:`, deleted_thread);
-  // const deleted_group = await groups.delete(update_forum.group);
-  // console.log(`Test Forum deleted: `, deleted_group);
 
   const allPublic = await groups.getAllPublic();
   console.log(`Get All Public Groups: `, allPublic);

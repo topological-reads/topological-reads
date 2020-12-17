@@ -9,12 +9,15 @@
   <body>
     <div class="topnav">
       <a href="/home">Home</a>
-      <a href="books">Books</a>
-      <a href="users">Users</a>
-      <a href="groups">Groups</a>
-      <a href="tags">Tags</a>
+      <a href="/books">Books</a>
+      <a href="/users">Users</a>
+      <a href="/groups">Groups</a>
+      <a href="/tags">Tags</a>
       <a href="/logout">Logout</a>
     </div>
+      {{#if message}}
+        <div class="success"><p>{{message}}</p></div>
+      {{/if}}
       {{#if body}}
         <h1>{{body.name}}</h1>
         {{#if owner}}
@@ -42,11 +45,36 @@
           </form>
         {{/if}}
         <div>
-          {{#each list}}
-            <li><a href="/lists/{{this._id}}">{{this.name}}</a></li>
+          <h2>Reading Lists</h2>
+          {{#if list.length}}
+            <ul>
+              {{#each list}}
+                <li><a href="/lists/{{this._id}}">{{this.name}}</a></li>
+              {{/each}}
+            </ul>
           {{else}}
             <p>No Lists are a part of this group.</p>
-          {{/each}}
+          {{/if}}
+        </div>
+        <div>
+          <h2>Forum Threads</h2>
+          {{#if invalidThread}}
+            <p>{{invalidThread}}</p>
+          {{/if}}
+          <form method="POST" action="/threads/{{body.forum}}">
+            <label for="forumComment">Add a new Thread!</label>
+            <input id="forumComment" type="text" name="forumComment">
+            <button type="submit">Click to add a thread!</button>
+          </form>
+          {{#if threads.length}}
+          <ul>
+            {{#each threads}}
+              <li><a href="/threads/{{this._id}}">{{this.initialComment}}</a></li>
+            {{/each}}
+          </ul>
+          {{else}}
+          <p>No Threads have been posted to the Forum.</p>
+          {{/if}}
         </div>
       {{/if}}
   </body>
