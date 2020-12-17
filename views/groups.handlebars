@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/public/css/style.css">
+  <title>Public Groups</title>
+</head>
+  <body>
+    <div class="topnav">
+      <a href="/home">Home</a>
+      <a href="books">Books</a>
+      <a href="users">Users</a>
+      <a class="active" href="groups">Groups</a>
+      <a href="tags">Tags</a>
+      <a href="/logout">Logout</a>
+    </div>
+
+    <div>
+        <ul>
+            {{#each body}}
+                <li><a href="/group/{{this._id}}">{{this.name}}</a></li>
+            {{else}}
+        </ul>
+    </div>
+    {{/each}}

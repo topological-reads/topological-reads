@@ -142,8 +142,8 @@ async function main() {
   const deleteAdmin = await groups.deleteAdmin(update_test._id, user5._id, user1._id);
   console.log(`Chris shouldn't be an admin!:`, deleteAdmin);
 
-  const deleteMember = await groups.deleteMember(update_test._id, user5._id, user1._id);
-  console.log(`You know... Chris shouldn't even be a member!... :( :`, deleteMember);
+  // const deleteMember = await groups.deleteMember(update_test._id, user5._id, user1._id);
+  // console.log(`You know... Chris shouldn't even be a member!... :( :`, deleteMember);
 
   console.log('Done seeding database');
 

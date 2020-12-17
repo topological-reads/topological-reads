@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/public/css/style.css">
+  <title>{{body.name}}</title>
+</head>
+  <body>
+    <div class="topnav">
+      <a href="/home">Home</a>
+      <a href="books">Books</a>
+      <a href="users">Users</a>
+      <a href="groups">Groups</a>
+      <a href="tags">Tags</a>
+      <a href="/logout">Logout</a>
+    </div>
+      {{#if body}}
+        <h1>{{body.name}}</h1>
+        {{#if owner}}
+          <form method="POST" action="/groups/addAdmin/{{body._id}}" class="makeAdmin">
+            <label for="adminName">Add Admin</label>
+            <input id="adminName" type="text" name="adminName"/>
+            <button type="submit">Add</button>
+          </form>
+          <form method="POST" action="/groups/deleteAdmin/{{body._id}}" class="removeAdmin">
+            <label for="adminName">Remove Admin</label>
+            <input id="adminName" type="text" name="adminName"/>
+            <button type="submit">Remove</button>
+          </form>
+        {{/if}}
+        {{#if admin}}
+          <form method="POST" action="/groups/addMember/{{body._id}}" class="makeMember">
+            <label for="memberName">Add Member</label>
+            <input id="memberName" type="text" name="memberName"/>
+            <button type="submit">Add</button>
+          </form>
+          <form method="POST" action="/groups/deleteMember/{{body._id}}" class="removeMember">
+            <label for="memberName">Remove Member</label>
+            <input id="memberName" type="text" name="memberName"/>
+            <button type="submit">Remove</button>
+          </form>
+        {{/if}}
+        <div>
+          {{#each list}}
+            <li><a href="/lists/{{this._id}}">{{this.name}}</a></li>
+          {{else}}
+            <p>No Lists are a part of this group.</p>
+          {{/each}}
+        </div>
+      {{/if}}
+  </body>
+</html>

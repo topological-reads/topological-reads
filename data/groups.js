@@ -44,7 +44,7 @@ module.exports = {
         if (!id || !ObjectID.isValid(id)) { throw `Error: the groups parameter id for read() was not correct.` };
         const allGroups = await groups();
         try {
-            let readGroup = await allGroups.findOne({ _id: id });
+            let readGroup = await allGroups.findOne({ _id: ObjectID(id) });
             return readGroup;
         } catch (e) {
             throw `Error: the group: ${id} could not be found.`;
@@ -82,7 +82,7 @@ module.exports = {
         const allGroups = await groups();
         const findGroup = await this.read(id);
         const updatedGroup = await allGroups.updateOne(
-            { _id: id },
+            { _id: ObjectID(id) },
             { $set: updatedBody }
         );
         return await this.read(id);
@@ -94,27 +94,30 @@ module.exports = {
         try {
             const allGroups = await groups();
             let isMember = false;
+            let groupOID = ObjectID(groupId);
+            let userOID = ObjectID(userId);
+            let ownerOID = ObjectID(ownerId);
             const group = await this.read(groupId);
-            if (!group.owner.equals(ownerId)) {
+            if (!group.owner.equals(ownerOID)) {
                 throw `Error: Admin privledges cannot be given unless you are the owner.`;
             }
             for (let user of group.members) {
-                if (user.equals(userId)) {
+                if (user.equals(userOID)) {
                     isMember = true;
                     break;
                 }
             }
             if (isMember) {
                 for (let member of group.admins) {
-                    if (member.equals(userId)) {
+                    if (member.equals(userOID)) {
                         throw `Error: Member ${member} is already an admin in the group.`
                     }
                 }
                 const addMember = await allGroups.updateOne(
-                    { _id: groupId },
-                    { $push: {admins: userId} }
+                    { _id: groupOID },
+                    { $push: {admins: userOID} }
                 );
-                return await this.read(groupId);
+                return await this.read(groupOID);
             } else {
                 throw `This user was not a member of the group: ${groupId}`;
             }
@@ -128,20 +131,22 @@ module.exports = {
         if (!userId || !ObjectID.isValid(userId)) { throw `Error: the group parameter userId when adding a public member was incorrect.` }
         try {
             const allGroups = await groups();
-            const group = await this.read(groupId);
+            let groupOID = ObjectID(groupId);
+            let userOID = ObjectID(userId);
+            const group = await this.read(groupOID);
             if (group.private) {
                 throw `Error: Group ${groupId} is private.`
             }
             for (let member of group.members) {
-                if (member.equals(userId)) {
+                if (member.equals(userOID)) {
                     throw `Error: Member is already in the group.`
                 }
             }
             const addMember = await allGroups.updateOne(
-                { _id: groupId },
-                { $push: {members: userId} }
+                { _id: groupOID },
+                { $push: {members: userOID} }
             );
-            return await this.read(groupId);
+            return await this.read(groupOID);
         } catch (e) {
             throw `Error while adding public member: ${e}`
         }
@@ -153,38 +158,41 @@ module.exports = {
         if (!adminId || !ObjectID.isValid(adminId)) { throw `Error: the group parameter ownerId when inviting a user to a private group was incorrect.` }
         try {
             let isAdmin = false;
+            let groupOID = ObjectID(groupId);
+            let userOID = ObjectID(userId);
+            let adminOID = ObjectID(adminId);
             const allGroups = await groups();
             const allUsers = await users();
-            const group = await this.read(groupId);
+            const group = await this.read(groupOID);
             if (!group.private) {
                 throw `Error: Group ${groupId} is not a private group.`;
             }
             for (let admin of group.admins) {
-                if (admin.equals(adminId)) {
+                if (admin.equals(adminOID)) {
                     isAdmin = true;
                     break;
                 }
             }
             if (isAdmin) {
                 for (let member of group.members) {
-                    if (member.equals(userId)) {
+                    if (member.equals(userOID)) {
                         throw `Error: User ${userId} is already a member of group: ${groupId}`;
                     }
                 }
                 for (let invitee of group.invitees) {
-                    if (invitee.equals(userId)) {
+                    if (invitee.equals(userOID)) {
                         throw `Error: User ${userId} is already an invitee of group: ${groupId}`;
                     }
                 }
                 const addInvitee = await allGroups.updateOne(
-                    { _id: groupId },
-                    { $push: {invitees: userId} }
+                    { _id: groupOID },
+                    { $push: {invitees: userOID} }
                 );
                 const sendInvite = await allUsers.updateOne(
-                    { _id: userId },
-                    { $push: {invitations: groupId} }
+                    { _id: userOID },
+                    { $push: {invitations: groupOID} }
                 );
-                return await this.read(groupId);
+                return await this.read(groupOID);
             }
             
         } catch (e) {
@@ -196,42 +204,44 @@ module.exports = {
         if (!groupId || !ObjectID.isValid(groupId)) { throw `Error: the group parameter groupId when responding to invitations was incorrect.` }
         if (!userId || !ObjectID.isValid(userId)) { throw `Error: the group parameter userId when responding to invitations was incorrect.` }
         try {
+            let groupOID = ObjectID(groupId);
+            let userOID = ObjectID(userId);
             const allGroups = await groups();
             const allUsers = await users();
-            const group = await this.read(groupId);
+            const group = await this.read(groupOID);
             if (!group.private) {
                 throw `Error: Group ${groupId} is not a private group.`;
             }
             for (let invitee of group.invitees) {
-                if (invitee.equals(userId)) {
+                if (invitee.equals(userOID)) {
                     if (response) {
                         const acceptInvite = await allGroups.updateOne(
-                            { _id: groupId },
-                            { $push: {members: userId} }
+                            { _id: groupOID },
+                            { $push: {members: userOID} }
                         )
                         const removeInvitee = await allGroups.updateOne(
-                            { _id: groupId },
-                            { $pull: {invitees: userId} }
+                            { _id: groupOID },
+                            { $pull: {invitees: userOID} }
                         )
                         const removeInvite = await allUsers.updateOne(
-                            { _id: userId },
-                            { $pull: {invitations: groupId} }
+                            { _id: userOID },
+                            { $pull: {invitations: groupOID} }
                         )
                         const addGroup = await allUsers.updateOne(
-                            { _id: userId},
-                            { $push: {groups: groupId} }
+                            { _id: userOID},
+                            { $push: {groups: groupOID} }
                         )
-                        return await this.read(groupId);
+                        return await this.read(groupOID);
                     } else {
                         const removeInvitee = await allGroups.updateOne(
-                            { _id: groupId },
-                            { $pull: {invitees: userId} }
+                            { _id: groupOID },
+                            { $pull: {invitees: userOID} }
                         )
                         const removeInvite = await allUsers.updateOne(
-                            { _id: userId },
-                            { $pull: {invitations: groupId} }
+                            { _id: userOID },
+                            { $pull: {invitations: groupOID} }
                         )
-                        return await this.read(groupId);
+                        return await this.read(groupOID);
                     }
                 }
             }
@@ -245,18 +255,21 @@ module.exports = {
         if (!adminId || !ObjectID.isValid(adminId)) { throw `Error: the group parameter adminId when deleting an Admin was incorrect.` }
         if (!ownerId || !ObjectID.isValid(ownerId)) { throw `Error: the group parameter ownerId when deleting an Admin was incorrect.` }
         try {
+            let groupOID = ObjectID(groupId);
+            let adminOID = ObjectID(adminId);
+            let ownerOID = ObjectID(ownerId);
             const allGroups = await groups();
-            const group = await this.read(groupId);
-            if (!group.owner.equals(ownerId)) {
+            const group = await this.read(groupOID);
+            if (!group.owner.equals(ownerOID)) {
                 throw `Error: Admin privledges cannot be removed unless you are the owner.`;
             }
             for (let admin of group.admins) {
-                if (admin.equals(adminId)) {
+                if (admin.equals(adminOID)) {
                     const deleteAdmin = await allGroups.updateOne(
-                        { _id: groupId },
-                        { $pull: {admins: adminId} }
+                        { _id: groupOID },
+                        { $pull: {admins: adminOID} }
                     );
-                    return await this.read(groupId);
+                    return await this.read(groupOID);
                 }
             }
             throw `Error: User ${adminId} is not an admin of group: ${groupId}`;
@@ -270,27 +283,30 @@ module.exports = {
         if (!memberId || !ObjectID.isValid(memberId)) { throw `Error: the group parameter memberId when deleting a member was incorrect.` }
         try {
             let isAdmin = false;
+            let groupOID = ObjectID(groupId);
+            let memberOID = ObjectID(memberId);
+            let adminOID = ObjectID(adminId);
             const allGroups = await groups();
             const allUsers = await users();
-            const group = await this.read(groupId);
+            const group = await this.read(groupOID);
             for (let admin of group.admins) {
-                if (admin.equals(adminId)) {
+                if (admin.equals(adminOID)) {
                     isAdmin = true;
                     break;
                 }
             }
             if (isAdmin) {
                 for (let member of group.members) {
-                    if (member.equals(memberId)) {
+                    if (member.equals(memberOID)) {
                         const deleteMember = await allGroups.updateOne(
-                            { _id: groupId },
-                            { $pull: {members: memberId} }
+                            { _id: groupOID },
+                            { $pull: {members: memberOID} }
                         );
                         const removeGroup = await allUsers.updateOne(
-                            { _id: memberId },
-                            { $pull: {groups: groupId} }
+                            { _id: memberOID },
+                            { $pull: {groups: groupOID} }
                         )
-                        return await this.read(groupId);
+                        return await this.read(groupOID);
                     }
                 }
                 throw `Error: User ${memberId} is not a member of group: ${groupId}`;
@@ -305,7 +321,8 @@ module.exports = {
     async delete(id) {
         if (!id || !ObjectID.isValid(id)) { throw `Error: the thread parameter id for delete() was not correct.` };
         const allGroups = await groups();
-        const group = await this.read(id);
+        let oID = ObjectID(id);
+        const group = await this.read(oID);
         try {
             const deletedForum = await forumsModule.delete(group.forum);
         } catch (e) {
@@ -313,7 +330,7 @@ module.exports = {
         }
         // TODO: Delete Reading Lists as well once that functionality is done
         try {
-            const deletedGroup = await allGroups.deleteOne({ _id: id });
+            const deletedGroup = await allGroups.deleteOne({ _id: oID });
         } catch (e) {
             throw `Error: there was an issue deleting group: ${id}. ${e}`;
         }
