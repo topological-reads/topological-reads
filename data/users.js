@@ -176,7 +176,7 @@ module.exports = {
       },
 
       async getByName(name) {
-        if (!name) throw 'ERROR: You must provide an name to search for';
+        if (!name) throw 'ERROR: You must provide a name to search for';
         // if (typeof(name) !== 'object') throw 'ERROR: name is not an object';
         //if(!ObjectID.isValid(name)) throw 'ERROR: Invalid object name'
         const userCollection = await users();
