@@ -21,7 +21,7 @@ router.get('/', async (req, res) => {
       }
     }
 
-    listOfLists = []
+    let listOfLists = []
 
     for(elem of user.lists) {
       listOfLists.push(await listsData.get(elem))
@@ -44,8 +44,13 @@ router.post('/', async (req, res) => {;
     if(!searchTerm) {
       res.render("../views/error", {other: true, errorMessage: "You must enter a search term!"})
     } else {
+      let user = await userData.getByName(req.session.user.name);
+      let listOfLists = []
+      for(let listId of user.lists) {
+        listOfLists.push(await listsData.get(listId))
+      }
       let bookList = await booksData.search(searchTerm.trim())
-      res.render("../views/books", {body: bookList})
+      res.render("../views/books", {body: bookList, lists : listOfLists})
     }
 
   } catch (e){

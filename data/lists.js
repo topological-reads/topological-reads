@@ -136,6 +136,23 @@ module.exports = {
         return {bookId: id, deleted: true};
       },
 
+      async followList(id, list_id) {
+        if (!id) throw 'ERROR: You must provide an id to search for';
+        if (!list_id) throw 'ERROR: You must provide an list_id to add';
+        if(!ObjectID.isValid(id)) throw 'ERROR: Invalid id';
+        if(!ObjectID.isValid(list_id)) throw 'ERROR: Invalid list_id id';
+
+        const userCollection = await users();
+        const updatedUser = await userCollection.updateOne(
+          {_id: ObjectID(id)},
+          {$push: {listsFollowing: ObjectID(list_id)}}
+        );
+        if (!updatedUser.matchedCount && !updatedUser.modifiedCount){
+          throw 'add list to user failed';
+        }
+        return this.get(ObjectID(list_id));
+      },
+
       async update(id, list) {
         if (!id) throw 'ERROR: You must provide an id to search for';
         if (!list) throw 'ERROR: You must provide a list to update';

@@ -41,6 +41,12 @@ router.get('/', async (req, res) => {
     for(let list of user.lists) {
       listOfLists.push(await listData.get(ObjectID(list)))
     }
+
+    let followedLists = [];
+    
+    for(let listFollowed of user.listsFollowing) {
+      followedLists.push(await listData.get(ObjectID(listFollowed)))
+    }
     
     let memberGroups = await groupData.getGroupsWhereUserIsMember(ObjectID(req.session.user._id));
 
@@ -50,7 +56,8 @@ router.get('/', async (req, res) => {
       readingBooks: readingBooks,
       followedUsers: followedUsers,
       myLists: listOfLists,
-      memberGroups : memberGroups
+      memberGroups : memberGroups,
+      followedLists : followedLists
     });
   } catch (e) {
     console.log(e)
