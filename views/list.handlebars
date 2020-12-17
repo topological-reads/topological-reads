@@ -21,7 +21,24 @@
 
   <main>
     {{!-- content goes here. See books.handlebars or user.handlebars for reference --}}
-    {{body}}
+    {{#if body}}
+      <div>List Name: {{body.name}}</div>
+        {{#if book}}
+          {{#each book}}
+            <div class="book">
+              <ul>
+                <li>Title: {{this.title}}</li>
+                <li>Author: {{this.author}}</li>
+                <li>Summary: {{this.summary}}</li>
+              </ul>
+            </div>
+          {{/each}}
+        {{/if}}
+    {{else}}
+      <div>
+        <h2>No Lists found.</h2>
+      </div>
+    {{/if}}
   </main>
 
 

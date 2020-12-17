@@ -2,6 +2,7 @@ const express = require('express'); // Use for testing
 const router = express.Router();
 const data = require('../data');
 const listsData = data.lists;
+const bookData = data.books;
 const userData = data.users;
 const { ObjectID } = require('mongodb'); // Edit
 
@@ -95,7 +96,20 @@ router.get('/:id', async (req, res) => {
 
   try {
     let list = await listsData.get(ObjectID(req.params.id));
-    res.render('../views/list', {body: list});
+    // console.log(list)
+    let listOfBookObjects = []
+
+    let listOfBookIds = list.items
+    // console.log(listOfBookIds)
+
+    listOfBookIds.forEach(async (bookID) => {
+      let bookObject = await bookData.get(ObjectID(bookID))
+      listOfBookObjects.push(bookObject)
+    });
+    
+    // console.log(listOfBookObjects)
+
+    res.render('../views/list', {body : list, book : listOfBookObjects});
   } catch (e) {
     console.log(e)
     res.status(404).json({ error: 'list not found' });
