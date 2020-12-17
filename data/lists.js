@@ -6,8 +6,6 @@ const groups = mongoCollections.groups;
 const lists = mongoCollections.lists;
 const tag = mongoCollections.tags;
 
-const { makeGraph, noCycles } = require('../util/dag');
-const { topologicalSort } = require('../util/topological-sort');
 
 module.exports = {
     async create(name, items, order, owners, tags){ 
@@ -28,7 +26,7 @@ module.exports = {
             if(!ObjectID.isValid(items[i])){
                 throw "ERROR: Invalid items input";
             }
-            let bookOne = await bookCollection.findOne({ _id: items[i]});
+            let bookOne = await bookCollection.findOne({ _id: ObjectID(items[i])});
             if (bookOne === null){
                 throw 'ERROR: No book with the ids in your list of items';
             } 
@@ -36,10 +34,6 @@ module.exports = {
 
         if(!order || !Array.isArray(order)){
             throw "ERROR: Invalid order input";
-        }
-        const orderGraph = makeGraph(order);
-        if (!noCycles(orderGraph)) {
-            throw "ERROR: Graph is not sortable."
         }
   
         for(let i = 0; i < order.length; i++){
@@ -129,8 +123,7 @@ module.exports = {
         const list1 = await listCollection.findOne({ _id: id});
         if (list1 === null) throw 'ERROR: No list with that id';
 
-        const { items, order } = list1;
-        return { items: topologicalSort(items, order), ...list1 };
+        return list1;
       },
       async remove(id) {
         if (!id) throw 'ERROR: You must provide an id to search for';

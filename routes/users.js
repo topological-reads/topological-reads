@@ -118,7 +118,7 @@ router.post('/followUser/:id', async (req, res) => {
   try {
     //followUser function handles making strings into ObjectIDs
     await usersData.followUser(req.session.user._id, req.params.id);
-    return res.status(200)
+    return res.status(200).redirect("/users");
   } catch (e) {
     console.log(e);
     res.status(404).json({ error: e });

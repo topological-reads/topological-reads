@@ -13,7 +13,7 @@ app.use(express.urlencoded({ extended: true}));
 const static = express.static(__dirname + '/public');
 app.use('/public', static);
 
-app.engine('handlebars',exphbs({ defaultLayout: false}));
+app.engine('handlebars',exphbs({ defaultLayout: false, helpers: require('./util/handlebarshelper')}));
 app.set('view engine', 'handlebars');
 
 app.use(
