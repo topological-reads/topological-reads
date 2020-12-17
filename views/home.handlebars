@@ -67,6 +67,9 @@
               {{#if memberGroups}}
                 {{#each memberGroups}}
                   <li><a href="/groups/{{this._id}}">{{this.name}}</a></li>
+                  <form method="POST">
+                    <button type="submit" formaction="/groups/deleteSelf/{{this._id}}">Leave the Group</button>
+                  </form>
                 {{/each}}
               {{else}}
                 <p>You are not the member of any groups.</p>

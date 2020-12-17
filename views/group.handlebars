@@ -70,11 +70,30 @@
             <button type="submit">Click to add a thread!</button>
           </form>
           {{#if threads.length}}
-          <ul>
-            {{#each threads}}
-              <li><a href="/threads/{{this._id}}">{{this.initialComment}}</a></li>
-            {{/each}}
-          </ul>
+            {{#if admin}}
+              <ul>
+                {{#each threads}}
+                <li>
+                  <a href="/threads/{{this._id}}">{{this.initialComment}}</a>
+                  <form method="POST" action="/threads/deleteThread/{{this._id}}">
+                      <button type="submit">Delete Thread</button>
+                  </form>
+                </li>
+                {{else}}
+                <p>No Threads have been posted to the Forum.</p>
+                {{/each}}
+            </ul>
+            {{else}}
+              <ul>
+                {{#each threads}}
+                <li>
+                  <a href="/threads/{{this._id}}">{{this.initialComment}}</a>
+                </li>
+                {{else}}
+                <p>No Threads have been posted to the Forum.</p>
+                {{/each}}
+              </ul>
+            {{/if}}
           {{else}}
           <p>No Threads have been posted to the Forum.</p>
           {{/if}}

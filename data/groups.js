@@ -3,6 +3,7 @@ const mongoCollections = require('../config/mongoCollections');
 const groups = mongoCollections.groups;
 const users = mongoCollections.users;
 const forumsModule = require('./forums');
+const userModule = require('./users')
 
 module.exports = {
     async create(name, creator, private = false, groupTags = []) {
@@ -247,6 +248,41 @@ module.exports = {
             }
         } catch (e) {
             throw `Error while responding to invitation: ${e}`;
+        }
+    },
+
+    async deleteSelf(groupId, selfId) {
+        if (!groupId || !ObjectID.isValid(groupId)) { throw `Error: the group parameter groupId when deleting self was incorrect.` }
+        if (!selfId || !ObjectID.isValid(selfId)) { throw `Error: the group parameter selfId when deleting self was incorrect.` }
+        try {
+            let groupOID = ObjectID(groupId);
+            let selfOID = ObjectID(selfId);
+            const thisGroup = await this.read(groupOID);
+            const allGroups = await groups();
+            const allUsers = await users();
+            for (let admin of thisGroup.admins) {
+                if (admin.equals(selfOID)) {
+                    const deleteAdmin = await allGroups.updateOne(
+                        { _id: groupOID },
+                        { $pull: {admins: selfOID} }
+                    );
+                }
+            }
+            for (let member of thisGroup.members) {
+                if (member.equals(selfOID)) {
+                    const deleteMember = await allGroups.updateOne(
+                        { _id: groupOID },
+                        { $pull: {members: selfOID} }
+                    );
+                }
+            }
+            const removeGroup = await allUsers.updateOne(
+                { _id: selfOID },
+                { $pull: { groups: groupOID} }
+            );
+            return await userModule.get(selfOID);
+        } catch (e) {
+            throw `Error: Issue while deleting user: ${selfId} by self.`;
         }
     },
 

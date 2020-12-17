@@ -118,6 +118,18 @@ router.post('/deleteMember/:groupId', async (req, res) => {
   }
 })
 
+router.post('/deleteSelf/:groupId', async (req, res) => {
+  if (!req.session.user){
+    return res.status(404).render('../views/error', { errorMessage :'You are not authenticated to view this information.' });
+  }
+  try {
+    const deleteSelf = await groups.deleteSelf(ObjectID(req.params.groupId), ObjectID(req.session.user._id));
+    return res.status(200).redirect('/home');
+  } catch (e) {
+    return res.status(404).render('../views/error', { errorMessage: `Issue while leaving a group. ${e}`, other: true});
+  }
+})
+
 router.post('/inviteResponse/:groupId/:inviteRes', async (req, res) => {
   try {
     let inviteRes = ( req.params.inviteRes === 'true')

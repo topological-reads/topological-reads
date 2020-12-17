@@ -38,9 +38,7 @@ router.post('/:forumId', async (req, res) => {
   }
   try {
       const makeThread = await threads.create(ObjectID(req.params.forumId), ObjectID(req.session.user._id), req.body.forumComment);
-      console.log(`Here?!`);
       const getPoster = await users.get(ObjectID(req.session.user._id));
-      console.log(`Please??`)
       return res.status(200).render('../views/thread', { body: makeThread, op: getPoster });
   } catch (e) {
       return res.status(404).render('../views/error', { errorMessage: 'There was an issue creating thread.', other: true });
@@ -58,14 +56,33 @@ router.post('/addComment/:threadId', async (req, res) => {
   if (!req.body.threadComment) {
     const forumThread = await threads.read(ObjectID(req.params.threadId));
     const thisUser = await users.get(forumThread.op);
-    return res.render('../views/group', {body: forumThread, op: thisUser, invalidComment: `Please type a phrase or word to comment!`});
+    return res.render('../views/group', { body: forumThread, op: thisUser, invalidComment: `Please type a phrase or word to comment!` });
   }
   try {
-      const addComment = await threads.addComment(ObjectID(req.params.threadId), userOID, req.body.threadComment);
-      const getPoster = await users.get(addComment.op);
-      return res.status(200).render("../views/thread", { body: addComment, op: getPoster });
+    const addComment = await threads.addComment(ObjectID(req.params.threadId), userOID, req.body.threadComment);
+    const getPoster = await users.get(addComment.op);
+    return res.status(200).render("../views/thread", { body: addComment, op: getPoster });
   } catch (e) {
     return res.status(404).render('../views/error', { errorMessage: 'There was an issue commenting on a thread.', other: true });
+  }
+})
+    
+  router.post('/deleteThread/:threadID', async (req, res) => {
+  if (!req.session.user){
+    return res.status(404).render('../views/error', { errorMessage :'You are not authenticated to view this information.' });
+  }
+  if (!ObjectID.isValid(req.params.threadID)) {
+    return res.status(404).render('../views/error', { errorMessage: 'There was an invalid thread id used.', other: true });
+  }
+  try {
+    const thread = await threads.read(ObjectID(req.params.threadID));
+    const deleteThread = await threads.delete(ObjectID(req.params.threadID));
+    const forum = await forums.read(ObjectID(thread.forum));
+    const group = await groups.read(ObjectID(forum.group));
+    const info = await getInfo(req, group, forum);
+    return res.status(200).render('../views/group', { body: group, list: info.listArr, owner: info.owner, admin: info.admin, threads: info.threadArr });
+  } catch (e) {
+    return res.status(404).render('../views/error', { errorMessage: 'There was an issue deleting this thread.', other: true });
   }
 })
 

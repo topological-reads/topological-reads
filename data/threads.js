@@ -23,9 +23,7 @@ module.exports = {
         }
         const threadsCollection = await threads();
         const forumsCollection = await forums();
-        console.log(`Working??`)
         const createThread = await threadsCollection.insertOne(newForum);
-        console.log(`Maybe???`)
         if (createThread.insertCount === 0) { throw `Error: There was an issue when adding the forum thread from: ${op}` };
         const insertThread = await forumsCollection.updateOne(
             { _id: ObjectID(forum) },
