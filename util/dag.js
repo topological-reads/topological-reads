@@ -76,7 +76,7 @@ function noCycles(graph) {
  */
 function predecessors(graph, v) {
     const p = new Set();
-    for (const u of graph) {
+    for (const u in graph) {
         if (graph[u].has(v)) {
             p.add(u);
         }
