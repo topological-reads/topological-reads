@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/public/css/style.css">
+  <title>{{op.name}}'s Thread</title>
+</head>
+  <body>
+    <div class="topnav">
+      <a href="/home">Home</a>
+      <a href="/books">Books</a>
+      <a href="/users">Users</a>
+      <a href="/groups">Groups</a>
+      <a href="/tags">Tags</a>
+      <a href="/logout">Logout</a>
+    </div>
+
+    <h2>{{body.initialComment}}</h2>
+    <p>Posted by: {{op.name}}</p>
+    <form method="POST" action="/threads/addComment/{{body._id}}">
+      <label for="threadComment">Add a new Thread!</label>
+      <input id="threadComment" type="text" name="threadComment">
+      <button type="submit">Click to add a thread!</button>
+    </form>
+    {{#if body.comments.length}}
+      <ul>
+          {{#each body.comments}}
+            <li>Comment: {{this.text}}</li>
+            <li>Date: {{this.when}}</li>
+            <li>By: {{this.name}}</li>
+          {{/each}}
+      </ul>
+    {{else}}
+      <p>There are no comments on this thread.</p>
+    {{/if}}
+  </body>
+</html>
