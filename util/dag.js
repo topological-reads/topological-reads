@@ -1,7 +1,7 @@
 /**
  * @typedef Graph
  * @template V
- * @type {object}
+ * @type {Object.<V, V[]>}
  */
 
 
@@ -35,6 +35,7 @@ function transitiveSuccessors(graph, v) {
 
 
 /**
+ * @function
  * @template V
  * @return {Graph<V>}
  */
@@ -53,6 +54,7 @@ function makeGraph(items) {
 
 
 /**
+ * @function
  * @template V
  * @param {Graph<V>} graph
  * @return {boolean}
@@ -66,7 +68,12 @@ function noCycles(graph) {
     return true;
 }
 
-
+/**
+ * @function
+ * @param {Graph.<V>} graph
+ * @param {V} v vertex
+ * @returns {Set.<V>} The predecessors of the vertex
+ */
 function predecessors(graph, v) {
     const p = new Set();
     for (const u of graph) {
