@@ -13,7 +13,6 @@ function isNonEmptyString (element) {
 
 router.post('/', async (req, res) => {
     req.body.username = req.body.username.toLowerCase();
-    console.log(req.body, req.body.password)
     if(!isNonEmptyString(req.body.username) || !isNonEmptyString(req.body.password)){
         return res.status(404).render('../views/login', {errorMessage :'You need to submit usernames and passwords as strings that are not empty.'});
     }
@@ -38,4 +37,24 @@ router.post('/', async (req, res) => {
 	}    
   });
 
+  router.post('/signup', async (req, res) => {
+    req.body.username = req.body.username.toLowerCase();
+    if(!isNonEmptyString(req.body.username) || !isNonEmptyString(req.body.password || !isNonEmptyString(req.body.email) || !isNonEmptyString(req.body.confirmPassword))){
+        return res.status(404).render('../views/login', {errorMessage :'You need to submit inputs as strings that are not empty.'});
+    }
+    if(req.body.password !== req.body.confirmPassword){
+        return res.status(404).render('../views/login', {errorMessage :'Passwords do not match.'});
+    }
+
+    let userObject;
+
+    try{
+        new_user = await usersData.create(req.body.username,req.body.email, [],[],[],[],[],[],req.body.password,[]);
+        userObject = await usersData.getByName(req.body.username);
+        req.session.user = userObject
+        return res.redirect('/home');
+    } catch {
+        return res.status(401).render('../views/login', {errorMessage :'Unable to make account'})
+    }  
+  });
 module.exports = router;

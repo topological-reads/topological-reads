@@ -73,10 +73,10 @@ async function main() {
   // console.log(tag2);
 
   // console.log("Making list 1")
-  const list1 = await lists.create("Our first list!", [book1_id, book2_id], [[book1_id, book2_id]], [user1_id], [tag1_id, tag2_id])
+  //const list1 = await lists.create("Our first list!", [book1_id, book2_id], [[book1_id, book2_id]], [user1_id], [tag1_id, tag2_id])
   // console.log(list1);
 
-  await users.addList(user1_id, list1._id)
+  //await users.addList(user1_id, list1._id)
 
   // console.log("books: getAll()")
   const book_get = await books.getAll();
