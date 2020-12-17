@@ -57,7 +57,19 @@
           <p>No books are currently being read.<p>
         {{/if}}
       </div>
-
+      <div>
+        <h1>Create a Group</h1>
+        <form method="POST" action="/groups/" id="createGroup" class="createGroup">
+          <label for="createGroup">Create A Group </label>
+          <input id="createGroup" type="text" placeholder="Enter Group Name" name="groupName"/>
+          <button type="submit">Create Group</button>
+        </form>
+        <label for="private">Is your group priavte?</label>
+        <select name="privateList" id="private" form="createGroup">
+          <option value="public">Public</option>
+          <option value="private">Private</option>
+        </select>
+      </div>
       <div>
         <h1>Group Membership</h1>
           <button onclick="showHide('groupMembership')">Show / Hide Content</button>

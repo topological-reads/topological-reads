@@ -33,25 +33,31 @@ router.get('/:id', async (req, res) => {
   }
 })
 
-router.post('/:name', async (req, res) => {
-  let private = req.query.private ? req.query.private : false;
-  let tags = req.query.tags ? req.query.tags : [];
+router.post('/', async (req, res) => {
+  let private = req.body.privateList === 'private' ? true : false;
+  let tags = req.body.tags ? req.body.tags : [];
   if (!req.session.user){
     return res.status(404).render('../views/error', {errorMessage :'You are not authenticated to view this information.'});
   }
+  if (!req.body.groupName) {
+    return res.status(404).render('../views/error', { errorMessage: 'There was an invalid thread id used.', other: true });
+  }
   try {
-    const addGroup = await groups.create(req.params.name, req.session.user, private, tags);
+    const addGroup = await groups.create(req.body.groupName, ObjectID(req.session.user._id), private, tags);
     const groupForum = await forums.read(addGroup.forum);
     const info = await getInfo(req, addGroup, groupForum)
     return res.render('../views/group', { body: addGroup, list: info.listArr, owner: info.isOwner, admin: info.isAdmin, threads: info.threadArr });
   } catch (e) {
-    return res.status(404).render('../views/error', { errorMessage: `Group Error: ${req.params.name} could not be created`, other: true});
+    return res.status(404).render('../views/error', { errorMessage: `Group Error: ${req.body.groupName} could not be created`, other: true});
   }
 })
 
 router.post('/addAdmin/:groupId', async (req, res) => {
   if (!req.session.user){
     return res.status(404).render('../views/error', {errorMessage :'You are not authenticated to view this information.'});
+  }
+  if (!ObjectID.isValid(req.params.groupId)) {
+    return res.status(404).render('../views/error', { errorMessage: 'There was an invalid addAdmin group id used.', other: true });
   }
   try {
     const member = await users.getByName(req.body.adminName);
@@ -68,6 +74,9 @@ router.post('/deleteAdmin/:groupId', async (req, res) => {
   if (!req.session.user){
     return res.status(404).render('../views/error', {errorMessage :'You are not authenticated to view this information.'});
   }
+  if (!ObjectID.isValid(req.params.groupId)) {
+    return res.status(404).render('../views/error', { errorMessage: 'There was an invalid deleteAdmin group id used.', other: true });
+  }
   try {
     const admin = await users.getByName(req.body.adminName);
     const deleteAdmin = await groups.deleteAdmin(req.params.groupId, admin._id, req.session.user._id);
@@ -82,6 +91,9 @@ router.post('/deleteAdmin/:groupId', async (req, res) => {
 router.post('/addMember/:groupId', async (req, res) => {
   if (!req.session.user){
     return res.status(404).render('../views/error', {errorMessage :'You are not authenticated to view this information.'});
+  }
+  if (!ObjectID.isValid(req.params.groupId)) {
+    return res.status(404).render('../views/error', { errorMessage: 'There was an invalid addMember group id used.', other: true });
   }
   try {
     const group = await groups.read(req.params.groupId);
@@ -107,6 +119,9 @@ router.post('/deleteMember/:groupId', async (req, res) => {
   if (!req.session.user){
     return res.status(404).render('../views/error', {errorMessage :'You are not authenticated to view this information.'});
   }
+  if (!ObjectID.isValid(req.params.groupId)) {
+    return res.status(404).render('../views/error', { errorMessage: 'There was an invalid deleteMember group id used.', other: true });
+  }
   try {
     const member = await users.getByName(req.body.memberName);
     const deleteMember = await groups.deleteMember(req.params.groupId, member._id, req.session.user._id);
@@ -131,6 +146,9 @@ router.post('/deleteSelf/:groupId', async (req, res) => {
 })
 
 router.post('/inviteResponse/:groupId/:inviteRes', async (req, res) => {
+  if (!req.session.user){
+    return res.status(404).render('../views/error', {errorMessage :'You are not authenticated to view this information.'});
+  }
   try {
     let inviteRes = ( req.params.inviteRes === 'true')
     const response = await groups.inviteResponse(req.params.groupId, req.session.user._id, inviteRes);
