@@ -110,7 +110,7 @@
           <button onclick="showHide('followedLists')">Show / Hide Content</button>
           <ul id="followedLists">
             {{#each followedLists}}
-
+              <li><a href="/lists/{{this._id}}">{{this.name}}</a></li>
             {{/each}}
           </ul>
         {{else}}
