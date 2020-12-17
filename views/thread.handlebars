@@ -13,11 +13,13 @@
       <a href="/users">Users</a>
       <a class="active" href="/groups">Groups</a>
       <a href="/tags">Tags</a>
+      <a href="/lists">Lists</a>
       <div class="topnav-right">
         <a href="/logout">Logout</a>
       </div>
     </div>
-
+    <br>
+    <a href="/groups">Return to Group Listings</a>
     <h2>{{body.initialComment}}</h2>
     <p>Posted by: {{op.name}}</p>
     <form method="POST" action="/threads/addComment/{{body._id}}">
@@ -28,14 +30,14 @@
     {{#if body.comments.length}}
       <ul>
           {{#each body.comments}}
-            <li>Comment: {{this.text}}</li>
-            <li>Date: {{this.when}}</li>
-            <li>By: {{this.name}}</li>
+            <div>User: <a href="/users/{{this.commenter}}">{{this.name}}</a></div>
+            <div>Comment: <br>&ensp;{{this.text}}</div>
+            <div>Date: {{this.when}}</div>
+            <br>
           {{/each}}
       </ul>
     {{else}}
       <p>There are no comments on this thread.</p>
     {{/if}}
-    <a href="/groups">Go back to groups list</a>
   </body>
 </html>
