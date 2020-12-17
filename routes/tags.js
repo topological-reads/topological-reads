@@ -12,14 +12,14 @@ router.get('/', async (req, res) => {
   try {
     const tags = await tagsData.getAll();
     const groups = await groupsData.getAll();
-    console.log(groups);
     const lists = await listsData.getAll();
-    console.log(lists);
     let g = []
     let l = []
     for(group of groups){
-      let name = group.name
-      g.push({id: group._id, name: name})
+      if(!group.private){
+        let name = group.name
+        g.push({id: group._id, name: name})
+      }
     }
     for(list of lists){
       let name = list.name
@@ -52,7 +52,7 @@ router.post('/', async (req, res) => {
     return res.status(404).render('../views/error', {errorMessage :'You must provide a tag.'});
   }
   if (!tag.name) {
-    return res.status(404).render('../views/error', {errorMessage :'You must provide an tag name'});
+    return res.status(404).render('../views/error', {errorMessage :'You must provide a tag name'});
   }
 
   if(Object.keys(tag).length !== 1){
@@ -77,17 +77,17 @@ router.post('/search', async (req, res) => {;
     let searchTerm = req.body.searchTerm;
     const tags = await tagsData.getAll();
     const groups = await groupsData.getAll();
-    console.log(groups);
     const lists = await listsData.getAll();
-    console.log(lists);
     let g = []
     let l = []
     for(tag of tags){
       if(tag.name === searchTerm){
         for(group of groups){
-          let name = group.name
-          if(group.tags.includes(tag.name)){
-            g.push({id: group._id, name: name})
+          if(!group.private){
+            let name = group.name
+            if(group.tags.includes(tag.name)){
+              g.push({id: group._id, name: name})
+            }
           }
         }
         for(list of lists){
