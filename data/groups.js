@@ -78,15 +78,35 @@ module.exports = {
         return groupList;
     },
 
+      //handles id and list_id as strings
+      async addList(id, list_id) {
+        if (!id) throw 'ERROR: You must provide an id to search for';
+        if (!list_id) throw 'ERROR: You must provide an book_id to add';
+        if(!ObjectID.isValid(id)) throw 'ERROR: Invalid id';
+        if(!ObjectID.isValid(list_id)) throw 'ERROR: Invalid book_id id';
+
+        const groupCollection = await groups();
+        const updatedGroup = await groupCollection.updateOne(
+          {_id: ObjectID(id)},
+          {$push: {lists: ObjectID(list_id)}}
+        );
+        if (!updatedGroup.matchedCount && !updatedGroup.modifiedCount){
+          throw 'addList failed';
+        }
+        return this.read(id);
+      },
+
     async update(id, updatedBody) {
         if (!id || !ObjectID.isValid(id)) { throw `Error: the groups parameter id for update() was not correct.` };
         const allGroups = await groups();
-        const findGroup = await this.read(id);
         const updatedGroup = await allGroups.updateOne(
             { _id: ObjectID(id) },
             { $set: updatedBody }
         );
-        return await this.read(id);
+        if (!updatedGroup.matchedCount && !updatedGroup.modifiedCount){
+            throw 'addList failed';
+          }
+        return this.read(id);
     },
     async addAdmin(groupId, userId, ownerId) {
         if (!groupId || !ObjectID.isValid(groupId)) { throw `Error: the group parameter groupId when adding an admin was incorrect.` }

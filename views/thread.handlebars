@@ -28,14 +28,15 @@
       <button type="submit">Click to add a comment!</button>
     </form>
     {{#if body.comments.length}}
-      <ul>
           {{#each body.comments}}
-            <div>User: <a href="/users/{{this.commenter}}">{{this.name}}</a></div>
-            <div>Comment: <br>&ensp;{{this.text}}</div>
-            <div>Date: {{this.when}}</div>
-            <br>
+            <div class="comment">
+              <ul class="no-bullets">
+                <li>User: <a href="/users/{{this.commenter}}">{{this.name}}</a><li>
+                <li>Comment: <br>&ensp;{{this.text}}</li>
+                <li>Date: {{this.when}}</li>
+              </ul>
+            </div>
           {{/each}}
-      </ul>
     {{else}}
       <p>There are no comments on this thread.</p>
     {{/if}}

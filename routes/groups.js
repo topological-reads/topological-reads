@@ -75,7 +75,7 @@ router.post('/deleteAdmin/:groupId', async (req, res) => {
     const info = await getInfo(req, deleteAdmin, groupForum);
     return res.status(200).render('../views/group', { body: deleteAdmin, list: info.listArr, owner: info.isOwner, admin: info.isAdmin, threads: info.threadArr, message: `Admin deleted correctly!` });
   } catch (e) {
-    return res.status(404).rendor('../views/error', { errorMessage: `Issue deleting admin from the admin list. ${e}`, other: true});
+    return res.status(404).render('../views/error', { errorMessage: `Issue deleting admin from the admin list. ${e}`, other: true});
   }
 })
 

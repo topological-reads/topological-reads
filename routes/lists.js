@@ -4,6 +4,7 @@ const data = require('../data');
 const listsData = data.lists;
 const bookData = data.books;
 const userData = data.users;
+const groupData = data.groups;
 const { ObjectID } = require('mongodb'); // Edit
 
 router.get('/', async (req, res) => {
@@ -17,7 +18,11 @@ router.get('/', async (req, res) => {
 
     for(elem of lists) {
       for(i=0; i<elem.owners.length; i++) {
-        elem.owners[i] = await userData.get(ObjectID(elem.owners[i]))
+        try {
+          elem.owners[i] = await userData.get(ObjectID(elem.owners[i]))
+        } catch {
+          elem.owners[i] = await groupData.read(ObjectID(elem.owners[i]))
+        }
       }
     }
     res.render("../views/lists", {body: lists, owners: owners});
@@ -59,6 +64,30 @@ router.post('/', async (req, res) => {
 
     res.redirect('/books')
   } catch (e) {
+      res.status(400).json({ error: e });
+  }
+});
+
+router.post('/newGroupList/:id', async (req, res) => {
+  if (!req.session.user){
+    return res.status(404).render('../views/error', {errorMessage :'You are not authenticate to view this information.'});
+  }
+  let list = req.body.listName;
+  if(!list){
+    res.status(400).render('../views/error', {other: true, errorMessage: "You must provide a list name!"});
+    return;
+  }
+  if (!req.params.id) {
+    res.status(400).render('../views/error', {other: true, errorMessage: "You must provide a valid list id!"});
+    return;
+  }
+  try {
+    let newList = await listsData.create(list,[],[],[ObjectID(req.params.id), ObjectID(req.session.user._id)],[]);
+    await userData.addList(req.session.user._id, newList._id)
+    await groupData.addList(req.params.id, newList._id)
+    res.redirect('/books')
+  } catch (e) {
+      console.log(e);
       res.status(400).json({ error: e });
   }
 });
