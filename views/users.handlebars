@@ -22,13 +22,11 @@
       {{#if body}}
         {{#each body}}
           <div class="user">
-            <ul>
-              {{!-- <li>Username: {{this.name}}</li> --}}
-              <div><a href="/users/{{this._id}}">{{this.name}}</a>
-                <form method="POST" action="/users/followUser/{{this._id}}" class="followUser">
-                  <button id="follow-user" type="submit">Follow this user</button>
-                </form>
-              </div>
+            <ul class="no-bullets">
+              <li>Username: <a href="/users/{{this._id}}">{{this.name}}</a></li>
+              <form method="POST" action="/users/followUser/{{this._id}}" class="followUser">
+                <button id="follow-user" type="submit">Follow this user</button>
+              </form>
             </ul>
           </div>
         {{/each}}

@@ -49,6 +49,13 @@
         {{/if}}
         <div>
           <h2>Reading Lists</h2>
+          {{#if admin}}
+            <form method="POST" action="/lists/newGroupList/{{body._id}}" class="makeGroupList">
+              <label for="make-group-list">Create List</label>
+              <input id="make-group-list" type="text" placeholder="Enter list name"name="listName"/>
+              <button type="submit">Create List</button>
+            </form>
+          {{/if}}
           {{#if list.length}}
             <ul>
               {{#each list}}
