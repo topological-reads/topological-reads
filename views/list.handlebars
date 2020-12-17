@@ -24,14 +24,22 @@
   <main>
     {{!-- content goes here. See books.handlebars or user.handlebars for reference --}}
     {{#if body}}
-      <div>List Name: {{body.name}}</div>
+      <h2>List Name: {{body.name}}</h2>
+      <h5>Read these books in sequential order.</h5>
         {{#if book}}
           {{#each book}}
             <div class="book">
               <ul>
+                <li>Book Order Number: {{inc @index}}</li>
                 <li>Title: {{this.title}}</li>
                 <li>Author: {{this.author}}</li>
                 <li>Summary: {{this.summary}}</li>
+                <form method="POST" action="/users/currentBook/{{this._id}}" class="currentBook">
+                  <button type="submit">Add Book to Currently Reading Books</button>
+                </form>
+                <form method="POST" action="/users/addBook/{{this._id}}" class="readBook">
+                  <button type="submit">Add Book to Read Books</button>
+                </form>
               </ul>
             </div>
           {{/each}}
