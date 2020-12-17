@@ -19,7 +19,6 @@ router.get('/', async (req, res) => {
         elem.owners[i] = await userData.get(ObjectID(elem.owners[i]))
       }
     }
-    console.log(lists[0].owners[0]);
     res.render("../views/lists", {body: lists, owners: owners});
   } catch (e) {
     console.log(e);
@@ -58,6 +57,28 @@ router.post('/', async (req, res) => {
     await userData.addList(req.session.user._id, newList._id)
 
     res.redirect('/books')
+  } catch (e) {
+      res.status(400).json({ error: e });
+  }
+});
+
+router.post('/fork/:id', async (req, res) => {
+  if (!req.session.user){
+    return res.status(404).render('../views/error', {errorMessage :'You are not authenticate to view this information.'});
+  }
+
+  if (!req.params.id) {
+    res.status(400).render('../views/error', {other: true, errorMessage: "You must provide a valid list id!"});
+    return;
+  }
+  try {
+    let currentList = await listsData.get(ObjectID(req.params.id));
+    console.log(currentList);
+    let newList = await listsData.create(currentList.name + `-${req.session.user.name}`, 
+      currentList.items, currentList.order, [ObjectID(req.session.user._id)], currentList.tags);
+    await userData.addList(req.session.user._id, newList._id);
+
+    res.redirect(`/lists/${newList._id}`)
   } catch (e) {
       res.status(400).json({ error: e });
   }

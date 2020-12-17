@@ -38,6 +38,9 @@
                     <form method="POST" action="/lists/followList/{{this._id}}" class="followList">
                       <button id="follow-list" type="submit">Follow this List</button>
                     </form>
+                    <form method="POST" action="/lists/fork/{{this._id}}" class="forkList">
+                        <button type="submit">Fork This List</button>
+                    </form>
                 </ul>
             </div>
         {{/each}}
