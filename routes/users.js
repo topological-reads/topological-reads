@@ -4,6 +4,7 @@ const data = require('../data');
 const usersData = data.users;
 const bookData = data.books;
 const listData = data.lists;
+const groupData = data.groups;
 const { ObjectID } = require('mongodb');
 router.get('/', async (req, res) => {
   if (!req.session.user){
@@ -41,8 +42,10 @@ router.get('/:userid', async (req, res) => {
       listOfLists.push(await listData.get(ObjectID(list)))
     }
 
+    let memberGroups = await groupData.getPublicGroupsWhereUserIsMember(ObjectID(req.params.userid));
+
     //missing groups
-    res.render("../views/user", {body: user, readBooks: readBooks, readingLists: listOfLists})
+    res.render("../views/user", {body: user, readBooks: readBooks, readingLists: listOfLists, inGroups:memberGroups})
   } catch (e) {
     console.log(e);
     res.status(404).render("../views/user", {})
