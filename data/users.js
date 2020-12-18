@@ -269,8 +269,20 @@ module.exports = {
         if (!user_id) throw 'ERROR: You must provide an book_id to add';
         if(!ObjectID.isValid(id)) throw 'ERROR: Invalid id';
         if(!ObjectID.isValid(user_id)) throw 'ERROR: Invalid book_id id';
+        if(id === user_id) throw "User cannot follow themself.";
 
         const userCollection = await users();
+        const user = await userCollection.findOne({ _id: ObjectID(id)});
+        // console.log(list_id)
+        // console.log(user.listsFollowing)
+        // console.log(user.listsFollowing.indexOf(ObjectID(list_id))>-1)
+        // If the list_id already exists in the user.listsFollowing Array render error page
+        user.usersFollowing.forEach(userBeingFollowed => {
+            if(userBeingFollowed.toString() === user_id){
+              throw "User is already being followed."
+            }
+        });
+
         const updatedUser = await userCollection.updateOne(
           {_id: ObjectID(id)},
           {$push: {usersFollowing: ObjectID(user_id)}}
