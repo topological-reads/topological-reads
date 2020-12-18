@@ -120,8 +120,7 @@ router.post('/followUser/:id', async (req, res) => {
     await usersData.followUser(req.session.user._id, req.params.id);
     return res.status(200).redirect("/users");
   } catch (e) {
-    console.log(e);
-    res.status(404).json({ error: e });
+      res.status(400).render('../views/error', {other: true, errorMessage: e});
   }
 
 });
