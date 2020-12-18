@@ -129,11 +129,8 @@ router.post('/search', async (req, res) => {;
           return res.render("../views/tags", {body : tags, groups: g, lists: l})
         }
       }
-      else{
-        return res.status(404).render('../views/error', {errorMessage : `No tag of ${searchTerm} found`, other: true});
-      }
     }
-      
+    return res.status(404).render('../views/error', {errorMessage : `No tag of ${searchTerm} found`, other: true});
     }
 });
 
