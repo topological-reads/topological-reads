@@ -6,9 +6,9 @@ Nicole Crockett, Chris Giordano, David Horowitz, Edward Minnix III, and William 
 ### Instructions
 
 Create a new empty directory at the desired location
-- Run git clone https://github.com/topological-reads/topological-reads.git .
-- Run  npm install
-- Run  npm start
+- Run  `git clone https://github.com/topological-reads/topological-reads.git .`
+- Run  `npm install`
+- Run  `npm start`
 - Navigate to http://localhost:3000
 - Create an account on the login screen and proceed to use the application
 
