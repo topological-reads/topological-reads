@@ -88,46 +88,38 @@ router.post('/deleteAdmin/:groupId', async (req, res) => {
     return res.status(404).render('../views/error', { errorMessage: `Issue deleting admin from the admin list. ${e}`, other: true});
   }
 })
-router.post('/tag', async (req, res) => {
-  console.log("Hello");
+router.post('/tag/:groupId', async (req, res) => {
   if (!req.session.user){
     return res.status(404).render('../views/error', {errorMessage :'You are not authenticated to view this information.'});
   }
-  
-  let t = await tags.getAll();
-    console.log(t);
-    let group_all = await groups.getAll();
-    console.log(group_all);
-    console.log(req.params.groupId);
+  try {
+    let t = await tags.getAll();
+    const thisGroup = await groups.read(ObjectID(req.params.groupId));
+    const thisForum = await forums.read(thisGroup.forum);
     if(!req.body.tagName){
-      return res.status(404).render('../views/error', {errorMessage :'No tag name given.'}); 
+      return res.status(404).render('../views/error', {errorMessage :'No tag name given.', other: true}); 
     }
     if(typeof(req.body.tagName) !== 'string'){
-      return res.status(404).render('../views/error', {errorMessage :'Invalid tag name'}); 
+      return res.status(404).render('../views/error', {errorMessage :'Invalid tag name', other: true}); 
     }
-    for(group in group_all){
-      console.log(group.name);
-      if(req.params.groupId === group.name){
-        let group1 = await groups.get(group._id);
-      }
-    }
+    let groupBody = thisGroup;
     for(tag of t){
-      if(tag.name === req.body.tagName && !group1.tag.includes(req.body.tagName)){
-        let lst = group1.tags.push(req.body.tagName);
-        let update = await groups.update(id, {tags: lst})
-        return res.status(200).render('../views/group', { message: `Tag ${req.body.tagName} added correctly!`});
+      if(tag.name === req.body.tagName && !thisGroup.tags.includes(req.body.tagName)){
+        let lst = groupBody.tags.push(req.body.tagName);
+        let update = await groups.update(thisGroup._id, groupBody)
+        const info = await getInfo(req, thisGroup, thisForum);
+        return res.status(200).render('../views/group', { body: thisGroup, list: info.listArr, owner: info.isOwner, admin: info.isAdmin, threads: info.threadArr, message: `Tag ${req.body.tagName} added correctly!`});
       }
     }
-    //let tag = tags.create(req.body.tagName);
-    //if(!group1.tags.includes(req.body.tagName)){
-    //let lst = group1.tags.push(req.body.tagName)
-    //let update = await groups.update(id, {tags: lst})
-    //return res.status(200).render('../views/group', { body: addTag, tag:tag, message: `Tag added correctly!`});  
-    //}
-     //}
-  //catch (e) {
-  //  return res.status(404).render('../views/error', { errorMessage: `Unable to add tag to list. ${e}`, other: true});
-  //}
+    if (tag.name === req.body.tagName) {
+      return res.status(404).render('../views/error', { errorMessage: `This group already has this tag.`, other: true});
+    } else {
+      return res.status(404).render('../views/error', { errorMessage: `This tag has not been created yet.`, other: true});
+    }
+  }
+  catch (e) {
+    return res.status(404).render('../views/error', { errorMessage: `Unable to add tag to list. ${e}`, other: true});
+  }
 
 });
 router.post('/addMember/:groupId', async (req, res) => {

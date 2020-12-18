@@ -104,7 +104,7 @@ module.exports = {
             { $set: updatedBody }
         );
         if (!updatedGroup.matchedCount && !updatedGroup.modifiedCount){
-            throw 'addList failed';
+            throw 'update failed';
           }
         return this.read(id);
     },

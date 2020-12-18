@@ -112,7 +112,7 @@
         </div>
         <div>
         <h2>Tags</h2>
-          <form method="POST" action="/groups/tag">
+          <form method="POST" action="/groups/tag/{{body._id}}">
             <label for="tagName">Add a new Tag!</label>
             <input id="tagName" type="text" name="tagName">
             <button type="submit">Click to add a tag!</button>
