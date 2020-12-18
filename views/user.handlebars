@@ -49,7 +49,7 @@
                     <ul>
                     {{#if inGroups}}
                         {{#each inGroups}}
-
+                          <li><a href="/groups/{{this._id}}">{{this.name}}</a></li>
                         {{/each}}
                     {{else}}
                         <h5>{{body.name}} is not a member of any groups.</h5>

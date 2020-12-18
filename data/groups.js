@@ -72,6 +72,21 @@ module.exports = {
         return userGroups;
     },
 
+    async getPublicGroupsWhereUserIsMember(id) {
+        const groupCollection = await groups();
+        const groupList = await groupCollection.find({}).toArray();
+        // For each group if the id is in the group.members array
+        const userGroups = []
+        groupList.forEach(group => {
+            group.members.forEach(memberId => {
+                if (memberId.toString() === id.toString() && group.private === false){
+                    userGroups.push(group)
+                }
+            })
+        });
+        return userGroups;
+    },
+
     async getAllPublic() {
         const groupCollection = await groups();
         const groupList = await groupCollection.find({ private: false }).toArray();
