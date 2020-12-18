@@ -5,6 +5,26 @@ const data = require('../data');
 const tagsData = data.tags;
 const groupsData = data.groups;
 const listsData = data.lists
+router.post('/', async (req, res) => {;
+  if (!req.session.user){
+    return res.status(404).render('../views/error', {errorMessage :'You are not authenticate to view this information.'});
+  }
+
+  try {
+    let tagName = req.body.tagName;
+    if(!tagName) {
+      res.render("../views/error", {other: true, errorMessage: "You must enter a tag!"})
+    } else {
+      let tag1 = await tagsData.create(tagName);
+      res.render("../views/tags", {message: "Tag added!"})
+    }
+
+  } catch (e){
+    console.log(e);
+    res.status(404).json({ error: e });
+  }
+});
+
 router.get('/', async (req, res) => {
   if (!req.session.user){
     return res.status(404).render('../views/error', {errorMessage :'You are not authenticated to view this information.'});
