@@ -27,17 +27,16 @@ async function main() {
   const user1_id = user1._id
 
   const user5 = await users.create(`Chris`, `example@gmail.com`, [book1_id], [],
-    [], [], [], [], `password`, []);
-    console.log(`User 2: Chris -> `, user5);
+    [], [], [], [], `Bilbo123`, []);
 
-  const user2 = await users.create("test","test@test.com",[book1_id], [],
-    [], [], [], [], "test", [])
+  const user2 = await users.create("John Smith","test@test.com",[book1_id], [],
+    [], [], [], [], "helloworld", [])
 
-  const user3 = await users.create("test2","test2@test.com",[book1_id], [],
-    [], [], [], [], "test", [])
+  const user3 = await users.create("Doe Rae","test2@test.com",[book1_id], [],
+    [], [], [], [], "goodbye$", [])
 
-  const user4 = await users.create("test3","test3@test.com",[book1_id], [],
-    [], [], [], [], "test", [])
+  const user4 = await users.create("Sunny","test3@test.com",[book1_id], [],
+    [], [], [], [], "goodmorning", [])
 
   const user_getAll = await users.getAll();
   const book2 = await books.create("The Great Gatsby","1111111111112", "J.D. Salinger", 
@@ -62,6 +61,8 @@ async function main() {
   }
   const group_create = await groups.create(`Horror Movie Fanatics`, user1_id, false, [`Spoopy`]);
   const test_create = await groups.create(`Test Run`, user1_id, true, [`Scary`, `Spooky`]);
+  const harry_create = await groups.create(`Harry Potter Fans`, user2._id, false, [`Fantasy`, `Thriller`]);
+  const tolkien_create = await groups.create(`The Hobbitlings`, user5._id, true, [`Fantasy`, `Adventure`]);
 
   const read_test = await groups.read(test_create._id);
 
@@ -69,19 +70,20 @@ async function main() {
   const update_forum = await forums.update(test_forum._id, {group: test_forum.group, threads: []});
 
   const inserted_thread = await threads.create(update_forum._id, user1_id, `The Shining was so scary to me!`);
-
+  const harry_thread = await threads.create(harry_create.forum, user3._id, `Harry Potter is Immortal.  Convince me otherwise.`);
+  const tolkien_thread = await threads.create(tolkien_create.forum, user5._id, `The Silmarillion should be the first J.R.R. Tolkien book read.`);
 
   const allPublic = await groups.getAllPublic();
 
   const readPublicData = await groups.addPublicMember(group_create._id, new ObjectID());
 
-  const inviteMember = await groups.invitePrivateMember(update_test._id, user5._id, user1._id);
+  const inviteMember = await groups.invitePrivateMember(test_create._id, user5._id, user1._id);
 
-  const inviteResponse = await groups.inviteResponse(update_test._id, user5._id, true);
+  const inviteResponse = await groups.inviteResponse(test_create._id, user5._id, true);
 
-  const addAdmin = await groups.addAdmin(update_test._id, user5._id, user1._id);
+  const addAdmin = await groups.addAdmin(test_create._id, user5._id, user1._id);
 
-  const deleteAdmin = await groups.deleteAdmin(update_test._id, user5._id, user1._id);
+  const deleteAdmin = await groups.deleteAdmin(test_create._id, user5._id, user1._id);
 
   console.log('Done seeding database');
 
