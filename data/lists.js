@@ -1,5 +1,7 @@
 const { ObjectID } = require('mongodb'); 
+const topSort = require('../util/topological-sort');
 const mongoCollections = require('../config/mongoCollections');
+const dag = require('../util/dag');
 const books = mongoCollections.books;
 const users = mongoCollections.users;
 const groups = mongoCollections.groups;
@@ -201,8 +203,8 @@ module.exports = {
             if(!Array.isArray(list.order)){
                 throw "ERROR: Invalid order input";
             }
-            const orderGraph = makeGraph(order);
-            if (!noCycles(orderGraph)) {
+            const orderGraph = dag.makeGraph(list.order);
+            if (!dag.noCycles(orderGraph)) {
                 throw "ERROR: Graph is not sortable."
             }
             for(let i = 0; i < list.order.length; i++){

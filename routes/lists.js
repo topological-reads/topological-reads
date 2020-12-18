@@ -5,6 +5,7 @@ const listsData = data.lists;
 const bookData = data.books;
 const userData = data.users;
 const groupData = data.groups;
+const tags = data.tags;
 const { ObjectID } = require('mongodb'); // Edit
 
 router.get('/', async (req, res) => {
@@ -45,10 +46,43 @@ router.post('/followList/:id', async (req, res) => {
     return res.status(200).redirect("/lists");
   } catch (e) {
     console.log(e);
-      res.status(400).render('../views/error', {other: true, errorMessage: e});
+    res.status(404).json({ error: e });
   }
 });
-
+router.post('/tag/:id', async (req, res) => {
+  if (!req.session.user){
+    return res.status(404).render('../views/error', {errorMessage :'You are not authenticated to view this information.'});
+  }
+  try {
+    let t = await tags.getAll();
+    let l = await listsData.getAll();
+    console.log(req.params);
+    const thisList = await listsData.get(ObjectID(req.params.id));
+    if(!req.body.tagName){
+      return res.status(404).render('../views/error', {errorMessage :'No tag name given.', other: true}); 
+    }
+    if(typeof(req.body.tagName) !== 'string'){
+      return res.status(404).render('../views/error', {errorMessage :'Invalid tag name', other: true}); 
+    }
+    let listBody = thisList;
+    for(tag of t){
+      if(tag.name === req.body.tagName && !thisList.tags.includes(ObjectID(req.params.id))){
+        let lst = listBody.tags.push(tag._id);
+        let update = await listsData.update(thisList._id, listBody)
+        return res.status(200).render('../views/list', { body: thisList, message: `Tag ${req.body.tagName} added correctly!`});
+      }
+    }
+    if (tag.name === req.body.tagName) {
+      return res.status(404).render('../views/error', { errorMessage: `This group already has this tag.`, other: true});
+    } 
+    else {
+      return res.status(404).render('../views/error', { errorMessage: `This tag has not been created yet.`, other: true});
+    }
+  }
+  catch (e) {
+    return res.status(404).render('../views/error', { errorMessage: `Unable to add tag to list. ${e}`, other: true});
+  }
+});
 router.post('/', async (req, res) => {
   if (!req.session.user){
     return res.status(404).render('../views/error', {errorMessage :'You are not authenticate to view this information.'});

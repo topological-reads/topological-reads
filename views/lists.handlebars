@@ -43,6 +43,13 @@
                     <form method="POST" action="/lists/fork/{{this._id}}" class="forkList">
                         <button type="submit">Fork This List</button>
                     </form>
+                <p>Tags<p>
+                <form method="POST" action="/lists/tag/{{this._id}}">
+                  <label for="tagName">Add a new Tag!</label>
+                  <input id="tagName" type="text" name="tagName">
+                  <button type="submit">Click to add a tag!</button>
+                </form>
+        </div>
                 </ul>
             </div>
         {{/each}}
